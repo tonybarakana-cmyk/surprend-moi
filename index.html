@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0b10">
+<title>Surprend Moi - Marketplace WhatsApp du Burundi</title>
+<meta name="description" content="Trouve les meilleurs vendeurs WhatsApp du Burundi. Negocie directement sur WhatsApp.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="brand">Surprend Moi</a>
+  <div class="header-actions">
+    <a href="inscription.html" class="btn btn-primary">S'inscrire</a>
+    <a href="connexion.html" class="btn btn-ghost">Connexion</a>
+  </div>
+</header>
+
+<main>
+
+  <section class="container hero">
+    <h1>Le marche WhatsApp <span>du Burundi</span></h1>
+    <p>Tous les vendeurs WhatsApp regroupes en un seul endroit. Cherche, trouve, negocie directement sur WhatsApp.</p>
+    <div class="hero-actions">
+      <a href="inscription-vendeur.html" class="btn btn-primary">Devenir vendeur</a>
+      <a href="inscription-client.html" class="btn btn-ghost">Creer un compte</a>
+    </div>
+  </section>
+
+  <section class="container">
+    <h2 class="section-title">Produits recents</h2>
+    <div id="produitsAccueil" class="produits-grid">
+      <div class="loader"></div>
+    </div>
+  </section>
+
+  <section class="container">
+    <h2 class="section-title">Comment ca marche</h2>
+    <div class="choices">
+      <div class="choice-card">
+        <h3>1. Cherche</h3>
+        <p>Parcours les produits des vendeurs WhatsApp du Burundi.</p>
+      </div>
+      <div class="choice-card">
+        <h3>2. Discute</h3>
+        <p>Clique sur Discuter. WhatsApp s'ouvre avec le vendeur.</p>
+      </div>
+      <div class="choice-card">
+        <h3>3. Negocie</h3>
+        <p>Tu negocies le prix directement avec le vendeur.</p>
+      </div>
+      <div class="choice-card">
+        <h3>4. Recois</h3>
+        <p>Le vendeur organise la livraison avec toi.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  Surprend Moi - Marketplace WhatsApp du Burundi
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/track.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/produits.js"></script>
+<script src="js/app.js"></script>
+<script>
+  (function () {
+    var grid = document.getElementById('produitsAccueil');
+    SM_PRODUITS.tousProduits().then(function (liste) {
+      grid.innerHTML = '';
+      if (!liste.length) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h3>Aucun produit pour le moment</h3><p>Les produits apparaitront ici.</p></div>';
+        return;
+      }
+      var max = Math.min(liste.length, 8);
+      for (var i = 0; i < max; i++) {
+        grid.appendChild(SM_APP.creerCarteProduit(liste[i]));
+      }
+    }).catch(function () {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h3>Erreur de chargement</h3></div>';
+    });
+  })();
+</script>
+</body>
+</html>

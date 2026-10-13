@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0b10">
+<title>Inscription vendeur - Surprend Moi</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="brand">Surprend Moi</a>
+</header>
+
+<main class="container-narrow">
+  <div class="card" style="margin-top:24px;">
+    <h2 class="card-title">Devenir vendeur</h2>
+
+    <form id="formVendeur">
+      <div class="form-group">
+        <label>Nom complet</label>
+        <input type="text" id="vNom" required>
+      </div>
+      <div class="form-group">
+        <label>Nom de la boutique</label>
+        <input type="text" id="vBoutique" required placeholder="Ex : Bracelets Jean">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="vEmail" required>
+      </div>
+      <div class="form-group">
+        <label>Telephone WhatsApp</label>
+        <input type="tel" id="vTel" required placeholder="257XXXXXXXX">
+        <div class="form-hint">Format international sans le signe plus</div>
+      </div>
+      <div class="form-group">
+        <label>Categorie principale</label>
+        <select id="vCat" required>
+          <option value="">Choisir</option>
+          <option>Bracelets</option>
+          <option>Gateaux</option>
+          <option>Fleurs</option>
+          <option>Rolls Eggs</option>
+          <option>Vetements</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Zone</label>
+        <input type="text" id="vZone" required placeholder="Ex : Bujumbura, Rohero">
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="vPass" required minlength="6">
+        <div class="form-hint">Minimum 6 caracteres</div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="btnV">Ouvrir ma boutique</button>
+    </form>
+
+    <div id="alerte" class="alert hidden"></div>
+
+    <p style="text-align:center;color:var(--text-soft);font-size:14px;margin-top:18px;">
+      Deja un compte ? <a href="connexion.html" style="color:var(--accent-1);">Se connecter</a>
+    </p>
+  </div>
+</main>
+
+<footer class="footer">Surprend Moi</footer>
+
+<script src="js/config.js"></script>
+<script src="js/track.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  document.getElementById('formVendeur').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = document.getElementById('btnV');
+    var alerte = document.getElementById('alerte');
+    btn.disabled = true;
+    btn.textContent = 'Creation...';
+
+    SM_AUTH.inscrireVendeur({
+      nom: document.getElementById('vNom').value.trim(),
+      boutique: document.getElementById('vBoutique').value.trim(),
+      email: document.getElementById('vEmail').value.trim().toLowerCase(),
+      telephone: document.getElementById('vTel').value.trim(),
+      categorie: document.getElementById('vCat').value,
+      zone: document.getElementById('vZone').value.trim(),
+      password: document.getElementById('vPass').value
+    }).then(function () {
+      alerte.className = 'alert alert-success';
+      alerte.textContent = 'Boutique creee. Connecte-toi pour ajouter tes produits.';
+      alerte.classList.remove('hidden');
+      document.getElementById('formVendeur').reset();
+      setTimeout(function () { location.href = 'connexion.html'; }, 1400);
+    }).catch(function (err) {
+      alerte.className = 'alert alert-error';
+      alerte.textContent = 'Erreur : ' + err.message;
+      alerte.classList.remove('hidden');
+    }).then(function () {
+      btn.disabled = false;
+      btn.textContent = 'Ouvrir ma boutique';
+    });
+  });
+</script>
+</body>
+</html>

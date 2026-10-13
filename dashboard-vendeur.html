@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0b10">
+<title>Ma boutique - Surprend Moi</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="brand">Surprend Moi</a>
+  <div class="header-actions">
+    <span id="nomVendeur" style="font-size:13px;color:var(--text-soft);"></span>
+    <button id="btnLogout" class="btn btn-ghost btn-small">Deconnexion</button>
+  </div>
+</header>
+
+<main class="container">
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;flex-wrap:wrap;gap:12px;">
+    <h1 class="section-title" style="margin:0;">Ma boutique</h1>
+    <a href="ajouter-produit.html" class="btn btn-primary">Ajouter un produit</a>
+  </div>
+
+  <div id="produitsVendeur" class="produits-grid" style="margin-top:24px;">
+    <div class="loader" style="grid-column:1/-1;"></div>
+  </div>
+
+</main>
+
+<footer class="footer">Surprend Moi</footer>
+
+<script src="js/config.js"></script>
+<script src="js/track.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/produits.js"></script>
+<script src="js/app.js"></script>
+<script>
+  var session = SM_AUTH.exigerConnexion('vendeur');
+  if (session) {
+    document.getElementById('nomVendeur').textContent = session.boutique || session.nom || session.email;
+
+    function charger() {
+      var grid = document.getElementById('produitsVendeur');
+      grid.innerHTML = '<div class="loader" style="grid-column:1/-1;"></div>';
+      SM_PRODUITS.mesProduits().then(function (liste) {
+        grid.innerHTML = '';
+        if (!liste.length) {
+          grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h3>Aucun produit</h3><p>Ajoute ton premier produit.</p></div>';
+          return;
+        }
+        for (var i = 0; i < liste.length; i++) {
+          var carte = SM_APP.creerCarteProduit(liste[i], { supprimable: true });
+          var btnSup = carte.querySelector('.btn-supprimer');
+          if (btnSup) {
+            btnSup.addEventListener('click', function () {
+              var id = this.getAttribute('data-id');
+              if (!confirm('Supprimer ce produit ?')) return;
+              SM_PRODUITS.supprimerProduit(id).then(charger);
+            });
+          }
+          grid.appendChild(carte);
+        }
+      });
+    }
+    charger();
+
+    document.getElementById('btnLogout').addEventListener('click', function () {
+      SM_AUTH.clearSession();
+      location.href = 'index.html';
+    });
+  }
+</script>
+</body>
+</html>

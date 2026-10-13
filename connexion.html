@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0b10">
+<title>Connexion - Surprend Moi</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="brand">Surprend Moi</a>
+</header>
+
+<main class="container-narrow">
+  <div class="card" style="margin-top:24px;">
+    <h2 class="card-title">Connexion</h2>
+
+    <form id="formConnexion">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="btnLogin">Se connecter</button>
+    </form>
+
+    <div id="alerte" class="alert hidden"></div>
+
+    <p style="text-align:center;color:var(--text-soft);font-size:14px;margin-top:18px;">
+      Pas de compte ? <a href="inscription.html" style="color:var(--accent-1);">S'inscrire</a>
+    </p>
+  </div>
+</main>
+
+<footer class="footer">Surprend Moi</footer>
+
+<script src="js/config.js"></script>
+<script src="js/track.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  document.getElementById('formConnexion').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = document.getElementById('btnLogin');
+    var alerte = document.getElementById('alerte');
+    btn.disabled = true;
+    btn.textContent = 'Connexion...';
+
+    var email = document.getElementById('email').value.trim().toLowerCase();
+    var password = document.getElementById('password').value;
+
+    SM_AUTH.connexion(email, password).then(function (res) {
+      if (res.error || !res.user) {
+        throw new Error(res.error || 'Email ou mot de passe incorrect');
+      }
+      SM_AUTH.saveSession(res.user);
+      if (res.user.role === 'admin') {
+        location.href = 'dashboard-admin.html';
+      } else if (res.user.role === 'vendeur') {
+        location.href = 'dashboard-vendeur.html';
+      } else {
+        location.href = 'index.html';
+      }
+    }).catch(function (err) {
+      alerte.className = 'alert alert-error';
+      alerte.textContent = err.message;
+      alerte.classList.remove('hidden');
+      btn.disabled = false;
+      btn.textContent = 'Se connecter';
+    });
+  });
+</script>
+</body>
+</html>

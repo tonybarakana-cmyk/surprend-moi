@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0b10">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin - Surprend Moi</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="brand">Surprend Moi - Admin</a>
+  <div class="header-actions">
+    <button id="btnLogout" class="btn btn-ghost btn-small">Deconnexion</button>
+  </div>
+</header>
+
+<main class="container">
+
+  <h1 class="section-title" style="margin-top:16px;">Tableau de bord</h1>
+
+  <div id="stats" class="stats-grid"></div>
+
+  <h2 class="section-title">Vendeurs</h2>
+  <div class="table-wrap"><table id="tableVendeurs"><thead><tr><th>Date</th><th>Boutique</th><th>Email</th><th>Telephone</th><th>Categorie</th><th>Zone</th></tr></thead><tbody></tbody></table></div>
+
+  <h2 class="section-title">Produits</h2>
+  <div class="table-wrap"><table id="tableProduits"><thead><tr><th>Date</th><th>Produit</th><th>Prix</th><th>Vendeur</th><th>Categorie</th></tr></thead><tbody></tbody></table></div>
+
+  <h2 class="section-title">Visites</h2>
+  <div class="table-wrap"><table id="tableVisites"><thead><tr><th>Date</th><th>Page</th><th>Pseudo</th></tr></thead><tbody></tbody></table></div>
+
+  <h2 class="section-title">Negociations</h2>
+  <div class="table-wrap"><table id="tableNegos"><thead><tr><th>Date</th><th>Produit</th><th>Vendeur</th></tr></thead><tbody></tbody></table></div>
+
+  <h2 class="section-title">Tentatives vendeur refusees</h2>
+  <div class="table-wrap"><table id="tableTentatives"><thead><tr><th>Date</th><th>Nom</th><th>WhatsApp</th><th>Message</th></tr></thead><tbody></tbody></table></div>
+
+</main>
+
+<footer class="footer">Surprend Moi - Administration</footer>
+
+<script src="js/config.js"></script>
+<script src="js/track.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  var session = SM_AUTH.exigerConnexion('admin');
+  if (session) {
+    document.getElementById('btnLogout').addEventListener('click', function () {
+      SM_AUTH.clearSession();
+      location.href = 'index.html';
+    });
+
+    SM_AUTH.apiGet({ action: 'admin_stats', email: session.email }).then(function (data) {
+      var s = document.getElementById('stats');
+      s.innerHTML =
+        '<div class="stat-card"><div class="stat-num">' + (data.visites || 0) + '</div><div class="stat-label">Visites</div></div>' +
+        '<div class="stat-card"><div class="stat-num">' + (data.vendeurs || 0) + '</div><div class="stat-label">Vendeurs</div></div>' +
+        '<div class="stat-card"><div class="stat-num">' + (data.produits || 0) + '</div><div class="stat-label">Produits</div></div>' +
+        '<div class="stat-card"><div class="stat-num">' + (data.negociations || 0) + '</div><div class="stat-label">Negociations</div></div>';
+
+      remplir('tableVendeurs', data.listeVendeurs || [], ['date', 'boutique', 'email', 'telephone', 'categorie', 'zone']);
+      remplir('tableProduits', data.listeProduits || [], ['date', 'nom', 'prix', 'boutique', 'categorie']);
+      remplir('tableVisites', data.listeVisites || [], ['date', 'page', 'pseudo']);
+      remplir('tableNegos', data.listeNegos || [], ['date', 'produit', 'vendeur']);
+      remplir('tableTentatives', data.listeTentatives || [], ['date', 'nom', 'whatsapp', 'message']);
+    });
+
+    function remplir(tableId, liste, colonnes) {
+      var tbody = document.querySelector('#' + tableId + ' tbody');
+      tbody.innerHTML = '';
+      var arr = liste.slice(-30).reverse();
+      if (!arr.length) {
+        tbody.innerHTML = '<tr><td colspan="' + colonnes.length + '" style="text-align:center;color:var(--text-mute);">Aucune donnee</td></tr>';
+        return;
+      }
+      for (var i = 0; i < arr.length; i++) {
+        var tr = document.createElement('tr');
+        for (var j = 0; j < colonnes.length; j++) {
+          var td = document.createElement('td');
+          td.textContent = arr[i][colonnes[j]] || '';
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
+    }
+  }
+</script>
+</body>
+</html>

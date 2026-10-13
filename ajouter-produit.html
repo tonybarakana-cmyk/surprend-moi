@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0b10">
+<title>Ajouter un produit - Surprend Moi</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="brand">Surprend Moi</a>
+  <div class="header-actions">
+    <a href="dashboard-vendeur.html" class="btn btn-ghost btn-small">Retour</a>
+  </div>
+</header>
+
+<main class="container-narrow">
+  <div class="card" style="margin-top:24px;">
+    <h2 class="card-title">Ajouter un produit</h2>
+
+    <form id="formProduit">
+      <div class="form-group">
+        <label>Photo du produit</label>
+        <label class="upload-zone" for="photoInput">
+          <div>Clique pour choisir une photo</div>
+          <div class="form-hint">Format JPG ou PNG. Optimisee automatiquement.</div>
+          <input type="file" id="photoInput" accept="image/*">
+          <img id="preview" class="upload-preview hidden">
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>Nom du produit</label>
+        <input type="text" id="pNom" required maxlength="80">
+      </div>
+
+      <div class="form-group">
+        <label>Prix (FBu)</label>
+        <input type="number" id="pPrix" required min="0">
+      </div>
+
+      <div class="form-group">
+        <label>Categorie</label>
+        <select id="pCat" required>
+          <option value="">Choisir</option>
+          <option>Bracelets</option>
+          <option>Gateaux</option>
+          <option>Fleurs</option>
+          <option>Rolls Eggs</option>
+          <option>Vetements</option>
+          <option>Autre</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="pDesc" required maxlength="400"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="btnP">Publier</button>
+    </form>
+
+    <div id="alerte" class="alert hidden"></div>
+  </div>
+</main>
+
+<footer class="footer">Surprend Moi</footer>
+
+<script src="js/config.js"></script>
+<script src="js/track.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/produits.js"></script>
+<script>
+  var session = SM_AUTH.exigerConnexion('vendeur');
+  var photoData = '';
+
+  document.getElementById('photoInput').addEventListener('change', function (e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    SM_PRODUITS.compresserImage(file, 800, 0.75).then(function (dataUrl) {
+      photoData = dataUrl;
+      var prev = document.getElementById('preview');
+      prev.src = dataUrl;
+      prev.classList.remove('hidden');
+    });
+  });
+
+  document.getElementById('formProduit').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!photoData) {
+      alert('Ajoute une photo');
+      return;
+    }
+    var btn = document.getElementById('btnP');
+    var alerte = document.getElementById('alerte');
+    btn.disabled = true;
+    btn.textContent = 'Publication...';
+
+    SM_PRODUITS.ajouterProduit({
+      nom: document.getElementById('pNom').value.trim(),
+      prix: parseInt(document.getElementById('pPrix').value, 10),
+      categorie: document.getElementById('pCat').value,
+      description: document.getElementById('pDesc').value.trim(),
+      photo: photoData
+    }).then(function () {
+      alerte.className = 'alert alert-success';
+      alerte.textContent = 'Produit publie.';
+      alerte.classList.remove('hidden');
+      setTimeout(function () { location.href = 'dashboard-vendeur.html'; }, 1200);
+    }).catch(function (err) {
+      alerte.className = 'alert alert-error';
+      alerte.textContent = 'Erreur : ' + err.message;
+      alerte.classList.remove('hidden');
+      btn.disabled = false;
+      btn.textContent = 'Publier';
+    });
+  });
+</script>
+</body>
+</html>
