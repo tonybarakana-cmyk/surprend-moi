@@ -18,10 +18,12 @@
     var div = document.createElement('div');
     div.className = 'produit';
 
+    var telephone = String(p.telephone == null ? '' : p.telephone);
+    var tel = telephone.replace(/[^0-9]/g, '');
+
     var msgWA = encodeURIComponent(
       'Bonjour, je suis interesse par : ' + p.nom + ' (' + p.prix + ' FBu) - vu sur Surprend Moi'
     );
-    var tel = (p.telephone || '').replace(/[^0-9]/g, '');
     var lienWA = 'https://wa.me/' + tel + '?text=' + msgWA;
 
     var html =
