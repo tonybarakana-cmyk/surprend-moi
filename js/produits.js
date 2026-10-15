@@ -1,8 +1,17 @@
 (function () {
+  function apiPost(payload) {
+    return fetch(window.CONFIG.API_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).then(function () { return true; });
+  }
+
   function ajouterProduit(data) {
     var s = window.SM_AUTH.getSession();
     if (!s) return Promise.reject(new Error('Non connecte'));
-    return window.SM_AUTH.apiPost({
+    return apiPost({
       action: 'ajouter_produit',
       email: s.email,
       nom: data.nom,
@@ -16,7 +25,7 @@
   function supprimerProduit(id) {
     var s = window.SM_AUTH.getSession();
     if (!s) return Promise.reject(new Error('Non connecte'));
-    return window.SM_AUTH.apiPost({
+    return apiPost({
       action: 'supprimer_produit',
       email: s.email,
       id: id
