@@ -27,7 +27,7 @@
   <div class="table-wrap"><table id="tableVendeurs"><thead><tr><th>Date</th><th>Boutique</th><th>Email</th><th>Telephone</th><th>Categorie</th><th>Zone</th></tr></thead><tbody></tbody></table></div>
 
   <h2 class="section-title">Produits</h2>
-  <div class="table-wrap"><table id="tableProduits"><thead><tr><th>Date</th><th>Produit</th><th>Prix</th><th>Vendeur</th><th>Categorie</th></tr></thead><tbody></tbody></table></div>
+  <div class="table-wrap"><table id="tableProduits"><thead><tr><th>Date</th><th>Produit</th><th>Prix</th><th>Boutique</th><th>Categorie</th></tr></thead><tbody></tbody></table></div>
 
   <h2 class="section-title">Visites</h2>
   <div class="table-wrap"><table id="tableVisites"><thead><tr><th>Date</th><th>Page</th><th>Pseudo</th></tr></thead><tbody></tbody></table></div>
@@ -58,6 +58,7 @@
       s.innerHTML =
         '<div class="stat-card"><div class="stat-num">' + (data.visites || 0) + '</div><div class="stat-label">Visites</div></div>' +
         '<div class="stat-card"><div class="stat-num">' + (data.vendeurs || 0) + '</div><div class="stat-label">Vendeurs</div></div>' +
+        '<div class="stat-card"><div class="stat-num">' + (data.clients || 0) + '</div><div class="stat-label">Clients</div></div>' +
         '<div class="stat-card"><div class="stat-num">' + (data.produits || 0) + '</div><div class="stat-label">Produits</div></div>' +
         '<div class="stat-card"><div class="stat-num">' + (data.negociations || 0) + '</div><div class="stat-label">Negociations</div></div>';
 

@@ -24,6 +24,11 @@
     } catch (e) {}
   }
 
-  track('visite');
+  var path = location.pathname;
+  var isHome = path.endsWith('/') || path.endsWith('/index.html');
+  if (isHome) {
+    track('visite');
+  }
+
   window.track = track;
 })();
