@@ -52,8 +52,8 @@
   }
 
   function compresserImage(file, maxSize, quality) {
-    maxSize = maxSize || 800;
-    quality = quality || 0.75;
+    maxSize = maxSize || 600;
+    quality = quality || 0.65;
     return new Promise(function (resolve, reject) {
       var reader = new FileReader();
       reader.onload = function (e) {

@@ -28,7 +28,7 @@
 
     var html =
       '<div class="produit-media">' +
-        '<img class="produit-img" src="' + escapeHtml(p.photo) + '" alt="' + escapeHtml(p.nom) + '" loading="lazy">' +
+        '<img class="produit-img" src="' + escapeHtml(p.photo) + '" alt="' + escapeHtml(p.nom) + '" loading="lazy" decoding="async">' +
         '<a class="produit-discuter" href="' + lienWA + '" target="_blank" rel="noopener" data-produit="' + escapeHtml(p.nom) + '">Discuter</a>' +
       '</div>' +
       '<div class="produit-info">' +

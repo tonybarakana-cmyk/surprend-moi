@@ -696,3 +696,221 @@ tbody tr:last-child td { border-bottom: none; }
 .recherche-prix:focus {
   border-color: var(--accent-1);
 }
+
+/* ==================== OPTIMISATION MOBILE ==================== */
+
+@media (max-width: 480px) {
+  .container {
+    padding: 16px 14px 60px;
+  }
+
+  .container-narrow {
+    padding: 16px 14px 60px;
+  }
+
+  .hero {
+    padding: 32px 12px 24px;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+    letter-spacing: -1px;
+    margin-bottom: 10px;
+  }
+
+  .hero p {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+
+  .header {
+    padding: 10px 14px;
+  }
+
+  .brand {
+    font-size: 17px;
+  }
+
+  .header-actions .btn {
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    margin: 24px 0 12px;
+  }
+
+  .produits-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .produit-info {
+    padding: 10px 10px 12px;
+  }
+
+  .produit-nom {
+    font-size: 13px;
+  }
+
+  .produit-prix {
+    font-size: 14px;
+  }
+
+  .produit-vendeur {
+    font-size: 10px;
+  }
+
+  .produit-discuter {
+    padding: 12px 14px;
+    font-size: 13px;
+    border-radius: 10px;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .recherche-bar {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .recherche-input,
+  .recherche-select {
+    min-width: 100%;
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  .recherche-filtres {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .recherche-prix {
+    min-width: 100%;
+    padding: 11px 14px;
+    font-size: 14px;
+  }
+
+  .recherche-filtres .btn {
+    width: 100%;
+    padding: 11px 16px;
+  }
+
+  .choice-card {
+    padding: 22px 18px;
+  }
+
+  .choice-card h3 {
+    font-size: 17px;
+  }
+
+  .choice-card p {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .card-title {
+    font-size: 16px;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 13px 14px;
+    font-size: 16px;
+  }
+
+  .form-group textarea {
+    min-height: 90px;
+  }
+
+  .btn {
+    padding: 13px 20px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+
+  .btn-small {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .footer {
+    padding: 30px 14px;
+    font-size: 11px;
+    margin-top: 40px;
+  }
+
+  .upload-zone {
+    padding: 24px 14px;
+    font-size: 14px;
+  }
+
+  .upload-preview {
+    max-height: 200px;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero h1 {
+    font-size: 24px;
+  }
+
+  .brand {
+    font-size: 15px;
+  }
+
+  .header-actions .btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .produits-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Anti-zoom sur double-tap et amélioration tactile */
+.btn,
+.produit-discuter,
+.btn-supprimer,
+.cat-chip,
+.recherche-input,
+.recherche-select,
+.recherche-prix,
+input,
+select,
+textarea,
+button {
+  touch-action: manipulation;
+}
+
+/* Zones cliquables plus franches sur mobile */
+.produit-discuter,
+.btn-supprimer {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+}
