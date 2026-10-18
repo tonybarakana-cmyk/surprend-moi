@@ -12,32 +12,36 @@
 <header class="header">
   <a href="index.html" class="brand">Surprend Moi</a>
   <div class="header-actions">
-    <span id="nomClient" style="font-size:13px;color:var(--text-soft);"></span>
     <button id="btnLogout" class="btn btn-ghost btn-small">Deconnexion</button>
   </div>
 </header>
 
 <main class="container">
 
-  <h1 class="section-title" style="margin-top:16px;">Mon compte</h1>
+  <h1 class="section-title" style="margin-top:16px;">Produits disponibles</h1>
 
-  <div class="card" style="margin-bottom:24px;">
-    <h2 class="card-title">Mes informations</h2>
-    <p style="color:var(--text-soft);font-size:14px;">
-      <strong>Nom :</strong> <span id="infoNom"></span><br>
-      <strong>Email :</strong> <span id="infoEmail"></span><br>
-      <strong>Telephone :</strong> <span id="infoTel"></span>
-    </p>
+  <div class="recherche-bar">
+    <input type="text" id="rechercheMot" placeholder="Rechercher un produit..." class="recherche-input">
+    <select id="rechercheCat" class="recherche-select">
+      <option value="">Toutes categories</option>
+    </select>
   </div>
 
-  <h2 class="section-title">Produits disponibles</h2>
-  <div id="produitsClient" class="produits-grid" style="margin-top:16px;">
+  <div class="recherche-filtres">
+    <input type="number" id="prixMin" placeholder="Prix min" class="recherche-prix">
+    <input type="number" id="prixMax" placeholder="Prix max" class="recherche-prix">
+    <button id="btnReset" class="btn btn-ghost btn-small">Reinitialiser</button>
+  </div>
+
+  <p id="resultatCount" style="color:var(--text-soft);font-size:13px;margin:12px 0;"></p>
+
+  <div id="produitsClient" class="produits-grid">
     <div class="loader" style="grid-column:1/-1;"></div>
   </div>
 
   <div class="empty-state hidden" id="vide" style="margin-top:40px;">
-    <h3>Aucun produit pour le moment</h3>
-    <p>Reviens plus tard.</p>
+    <h3>Aucun produit trouve</h3>
+    <p>Essaie un autre mot-cle ou une autre categorie.</p>
   </div>
 
 </main>
@@ -52,30 +56,95 @@
 <script>
   var session = SM_AUTH.exigerConnexion('client');
   if (session) {
-    document.getElementById('nomClient').textContent = session.nom || session.email;
-    document.getElementById('infoNom').textContent = session.nom || '';
-    document.getElementById('infoEmail').textContent = session.email || '';
-    document.getElementById('infoTel').textContent = session.telephone || '';
-
     document.getElementById('btnLogout').addEventListener('click', function () {
       SM_AUTH.clearSession();
       location.href = 'index.html';
     });
 
+    var tousLesProduits = [];
     var grid = document.getElementById('produitsClient');
     var vide = document.getElementById('vide');
+    var count = document.getElementById('resultatCount');
+    var inputMot = document.getElementById('rechercheMot');
+    var selectCat = document.getElementById('rechercheCat');
+    var inputMin = document.getElementById('prixMin');
+    var inputMax = document.getElementById('prixMax');
 
     SM_PRODUITS.tousProduits().then(function (liste) {
+      tousLesProduits = liste;
+      remplirCategories(liste);
+      afficher(liste);
+    }).catch(function () {
+      grid.innerHTML = '';
+      vide.classList.remove('hidden');
+      vide.querySelector('h3').textContent = 'Erreur de chargement';
+      vide.querySelector('p').textContent = 'Verifie ta connexion internet.';
+    });
+
+    function remplirCategories(liste) {
+      var cats = {};
+      for (var i = 0; i < liste.length; i++) {
+        if (liste[i].categorie) cats[liste[i].categorie] = true;
+      }
+      var noms = Object.keys(cats).sort();
+      for (var j = 0; j < noms.length; j++) {
+        var opt = document.createElement('option');
+        opt.value = noms[j];
+        opt.textContent = noms[j];
+        selectCat.appendChild(opt);
+      }
+    }
+
+    function filtrer() {
+      var mot = inputMot.value.trim().toLowerCase();
+      var cat = selectCat.value;
+      var min = parseFloat(inputMin.value) || 0;
+      var max = parseFloat(inputMax.value) || Infinity;
+
+      return tousLesProduits.filter(function (p) {
+        if (mot) {
+          var nom = (p.nom || '').toLowerCase();
+          var desc = (p.description || '').toLowerCase();
+          var boutique = (p.boutique || '').toLowerCase();
+          if (nom.indexOf(mot) === -1 && desc.indexOf(mot) === -1 && boutique.indexOf(mot) === -1) return false;
+        }
+        if (cat && p.categorie !== cat) return false;
+        var prix = Number(p.prix) || 0;
+        if (prix < min) return false;
+        if (prix > max) return false;
+        return true;
+      });
+    }
+
+    function afficher(liste) {
       grid.innerHTML = '';
       if (!liste.length) {
         vide.classList.remove('hidden');
+        count.textContent = '';
         return;
       }
+      vide.classList.add('hidden');
+      count.textContent = liste.length + ' produit' + (liste.length > 1 ? 's' : '') + ' trouve' + (liste.length > 1 ? 's' : '');
       for (var i = 0; i < liste.length; i++) {
         grid.appendChild(SM_APP.creerCarteProduit(liste[i]));
       }
-    }).catch(function () {
-      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h3>Erreur de chargement</h3></div>';
+    }
+
+    function rafraichir() {
+      afficher(filtrer());
+    }
+
+    inputMot.addEventListener('input', rafraichir);
+    selectCat.addEventListener('change', rafraichir);
+    inputMin.addEventListener('input', rafraichir);
+    inputMax.addEventListener('input', rafraichir);
+
+    document.getElementById('btnReset').addEventListener('click', function () {
+      inputMot.value = '';
+      selectCat.value = '';
+      inputMin.value = '';
+      inputMax.value = '';
+      afficher(tousLesProduits);
     });
   }
 </script>

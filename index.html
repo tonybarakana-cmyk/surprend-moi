@@ -30,9 +30,30 @@
   </section>
 
   <section class="container">
-    <h2 class="section-title">Produits recents</h2>
+    <h2 class="section-title">Trouver un produit</h2>
+
+    <div class="recherche-bar">
+      <input type="text" id="rechercheMot" placeholder="Rechercher un produit..." class="recherche-input">
+      <select id="rechercheCat" class="recherche-select">
+        <option value="">Toutes categories</option>
+      </select>
+    </div>
+
+    <div class="recherche-filtres">
+      <input type="number" id="prixMin" placeholder="Prix min" class="recherche-prix">
+      <input type="number" id="prixMax" placeholder="Prix max" class="recherche-prix">
+      <button id="btnReset" class="btn btn-ghost btn-small">Reinitialiser</button>
+    </div>
+
+    <p id="resultatCount" style="color:var(--text-soft);font-size:13px;margin:12px 0;"></p>
+
     <div id="produitsAccueil" class="produits-grid">
-      <div class="loader"></div>
+      <div class="loader" style="grid-column:1/-1;"></div>
+    </div>
+
+    <div class="empty-state hidden" id="vide" style="margin-top:40px;">
+      <h3>Aucun produit trouve</h3>
+      <p>Essaie un autre mot-cle ou une autre categorie.</p>
     </div>
   </section>
 
@@ -71,19 +92,90 @@
 <script src="js/app.js"></script>
 <script>
   (function () {
+    var tousLesProduits = [];
     var grid = document.getElementById('produitsAccueil');
+    var vide = document.getElementById('vide');
+    var count = document.getElementById('resultatCount');
+    var inputMot = document.getElementById('rechercheMot');
+    var selectCat = document.getElementById('rechercheCat');
+    var inputMin = document.getElementById('prixMin');
+    var inputMax = document.getElementById('prixMax');
+
     SM_PRODUITS.tousProduits().then(function (liste) {
+      tousLesProduits = liste;
+      remplirCategories(liste);
+      afficher(liste);
+    }).catch(function () {
+      grid.innerHTML = '';
+      vide.classList.remove('hidden');
+      vide.querySelector('h3').textContent = 'Erreur de chargement';
+      vide.querySelector('p').textContent = 'Verifie ta connexion internet.';
+    });
+
+    function remplirCategories(liste) {
+      var cats = {};
+      for (var i = 0; i < liste.length; i++) {
+        if (liste[i].categorie) cats[liste[i].categorie] = true;
+      }
+      var noms = Object.keys(cats).sort();
+      for (var j = 0; j < noms.length; j++) {
+        var opt = document.createElement('option');
+        opt.value = noms[j];
+        opt.textContent = noms[j];
+        selectCat.appendChild(opt);
+      }
+    }
+
+    function filtrer() {
+      var mot = inputMot.value.trim().toLowerCase();
+      var cat = selectCat.value;
+      var min = parseFloat(inputMin.value) || 0;
+      var max = parseFloat(inputMax.value) || Infinity;
+
+      return tousLesProduits.filter(function (p) {
+        if (mot) {
+          var nom = (p.nom || '').toLowerCase();
+          var desc = (p.description || '').toLowerCase();
+          var boutique = (p.boutique || '').toLowerCase();
+          if (nom.indexOf(mot) === -1 && desc.indexOf(mot) === -1 && boutique.indexOf(mot) === -1) return false;
+        }
+        if (cat && p.categorie !== cat) return false;
+        var prix = Number(p.prix) || 0;
+        if (prix < min) return false;
+        if (prix > max) return false;
+        return true;
+      });
+    }
+
+    function afficher(liste) {
       grid.innerHTML = '';
       if (!liste.length) {
-        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h3>Aucun produit pour le moment</h3><p>Les produits apparaitront ici.</p></div>';
+        vide.classList.remove('hidden');
+        count.textContent = '';
         return;
       }
-      var max = Math.min(liste.length, 8);
-      for (var i = 0; i < max; i++) {
+      vide.classList.add('hidden');
+      count.textContent = liste.length + ' produit' + (liste.length > 1 ? 's' : '') + ' trouve' + (liste.length > 1 ? 's' : '');
+      for (var i = 0; i < liste.length; i++) {
         grid.appendChild(SM_APP.creerCarteProduit(liste[i]));
       }
-    }).catch(function () {
-      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h3>Erreur de chargement</h3></div>';
+    }
+
+    function rafraichir() {
+      afficher(filtrer());
+    }
+
+    inputMot.addEventListener('input', rafraichir);
+    selectCat.addEventListener('change', rafraichir);
+    inputMin.addEventListener('input', rafraichir);
+    inputMax.addEventListener('input', rafraichir);
+
+    document.getElementById('btnReset').addEventListener('click', function () {
+      inputMot.value = '';
+      selectCat.value = '';
+      inputMin.value = '';
+      inputMax.value = '';
+      afficher(tousLesProduits);
     });
   })();
 </script>
