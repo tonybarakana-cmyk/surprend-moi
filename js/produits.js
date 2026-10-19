@@ -87,6 +87,26 @@
     });
   }
 
+  function marquerVendu(id) {
+    var s = window.SM_AUTH.getSession();
+    if (!s) return Promise.reject(new Error('Non connecte'));
+    return apiPost({
+      action: 'marquer_vendu',
+      email: s.email,
+      id: id
+    });
+  }
+
+  function restaurerProduit(id) {
+    var s = window.SM_AUTH.getSession();
+    if (!s) return Promise.reject(new Error('Non connecte'));
+    return apiPost({
+      action: 'restaurer_produit',
+      email: s.email,
+      id: id
+    });
+  }
+
   function mesProduits() {
     var s = window.SM_AUTH.getSession();
     if (!s) return Promise.resolve([]);
@@ -109,6 +129,8 @@
   window.SM_PRODUITS = {
     ajouterProduit: ajouterProduit,
     supprimerProduit: supprimerProduit,
+    marquerVendu: marquerVendu,
+    restaurerProduit: restaurerProduit,
     mesProduits: mesProduits,
     tousProduits: tousProduits,
     produitsVendeur: produitsVendeur,

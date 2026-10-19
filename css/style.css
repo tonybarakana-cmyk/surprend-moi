@@ -871,3 +871,80 @@ button {
 .btn-supprimer {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
+
+/* ==================== STATUT VENDU ==================== */
+
+.badge-vendu {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #25d366;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  z-index: 2;
+}
+
+.compte-a-rebours {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f59e0b;
+  margin-top: 6px;
+  margin-bottom: 8px;
+}
+
+.produit-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.btn-action {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  width: 100%;
+  transition: background 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+  border: 1px solid;
+}
+
+.btn-marquer {
+  background: rgba(37, 211, 102, 0.15);
+  border-color: rgba(37, 211, 102, 0.5);
+  color: #4ade80;
+}
+
+.btn-marquer:hover {
+  background: #25d366;
+  color: #fff;
+}
+
+.btn-restaurer {
+  background: rgba(0, 198, 255, 0.15);
+  border-color: rgba(0, 198, 255, 0.5);
+  color: #00c6ff;
+}
+
+.btn-restaurer:hover {
+  background: #00c6ff;
+  color: #fff;
+}
+
+.btn-supprimer {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #f87171;
+}
+
+.btn-supprimer:hover {
+  background: #ef4444;
+  color: #fff;
+}

@@ -24,7 +24,13 @@
     <a href="ajouter-produit.html" class="btn btn-primary">Ajouter un produit</a>
   </div>
 
-  <div id="produitsVendeur" class="produits-grid" style="margin-top:24px;">
+  <h2 class="section-title">Mes produits disponibles</h2>
+  <div id="produitsDisponibles" class="produits-grid">
+    <div class="loader" style="grid-column:1/-1;"></div>
+  </div>
+
+  <h2 class="section-title">Vendus recemment</h2>
+  <div id="produitsVendus" class="produits-grid">
     <div class="loader" style="grid-column:1/-1;"></div>
   </div>
 
@@ -42,35 +48,97 @@
   if (session) {
     document.getElementById('nomVendeur').textContent = session.boutique || session.nom || session.email;
 
-    function charger() {
-      var grid = document.getElementById('produitsVendeur');
-      grid.innerHTML = '<div class="loader" style="grid-column:1/-1;"></div>';
-      SM_PRODUITS.mesProduits().then(function (liste) {
-        grid.innerHTML = '';
-        if (!liste.length) {
-          grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h3>Aucun produit</h3><p>Ajoute ton premier produit.</p></div>';
-          return;
-        }
-        for (var i = 0; i < liste.length; i++) {
-          var carte = SM_APP.creerCarteProduit(liste[i], { supprimable: true });
-          var btnSup = carte.querySelector('.btn-supprimer');
-          if (btnSup) {
-            btnSup.addEventListener('click', function () {
-              var id = this.getAttribute('data-id');
-              if (!confirm('Supprimer ce produit ?')) return;
-              SM_PRODUITS.supprimerProduit(id).then(charger);
-            });
-          }
-          grid.appendChild(carte);
-        }
-      });
-    }
-    charger();
-
     document.getElementById('btnLogout').addEventListener('click', function () {
       SM_AUTH.clearSession();
       location.href = 'index.html';
     });
+
+    function charger() {
+      var dispo = document.getElementById('produitsDisponibles');
+      var vendus = document.getElementById('produitsVendus');
+      dispo.innerHTML = '<div class="loader" style="grid-column:1/-1;"></div>';
+      vendus.innerHTML = '<div class="loader" style="grid-column:1/-1;"></div>';
+
+      SM_PRODUITS.mesProduits().then(function (liste) {
+        var disponibles = [];
+        var vendusListe = [];
+        for (var i = 0; i < liste.length; i++) {
+          if (liste[i].statut === 'vendu') {
+            vendusListe.push(liste[i]);
+          } else {
+            disponibles.push(liste[i]);
+          }
+        }
+
+        dispo.innerHTML = '';
+        if (!disponibles.length) {
+          dispo.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h3>Aucun produit disponible</h3><p>Ajoute ton premier produit.</p></div>';
+        } else {
+          for (var j = 0; j < disponibles.length; j++) {
+            var carte = SM_APP.creerCarteProduit(disponibles[j], { actions: 'disponible' });
+            attacherActions(carte);
+            dispo.appendChild(carte);
+          }
+        }
+
+        vendus.innerHTML = '';
+        if (!vendusListe.length) {
+          vendus.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h3>Aucun produit vendu recemment</h3></div>';
+        } else {
+          for (var k = 0; k < vendusListe.length; k++) {
+            var carteV = SM_APP.creerCarteProduit(vendusListe[k], { actions: 'vendu' });
+            attacherActions(carteV);
+            vendus.appendChild(carteV);
+          }
+        }
+      });
+    }
+
+    function attacherActions(carte) {
+      var btnMarquer = carte.querySelector('.btn-marquer');
+      if (btnMarquer) {
+        btnMarquer.addEventListener('click', function () {
+          var id = this.getAttribute('data-id');
+          if (!confirm('Marquer ce produit comme vendu ?')) return;
+          SM_PRODUITS.marquerVendu(id).then(function () {
+            charger();
+          });
+        });
+      }
+
+      var btnRestaurer = carte.querySelector('.btn-restaurer');
+      if (btnRestaurer) {
+        btnRestaurer.addEventListener('click', function () {
+          var id = this.getAttribute('data-id');
+          if (!confirm('Restaurer ce produit ?')) return;
+          SM_PRODUITS.restaurerProduit(id).then(function () {
+            charger();
+          });
+        });
+      }
+
+      var btnSuppr = carte.querySelector('.btn-supprimer');
+      if (btnSuppr) {
+        btnSuppr.addEventListener('click', function () {
+          var id = this.getAttribute('data-id');
+          if (!confirm('Supprimer ce produit ?')) return;
+          SM_PRODUITS.supprimerProduit(id).then(function () {
+            charger();
+          });
+        });
+      }
+    }
+
+    charger();
+
+    setInterval(function () {
+      var compteurs = document.querySelectorAll('.compte-a-rebours');
+      for (var i = 0; i < compteurs.length; i++) {
+        var dv = compteurs[i].getAttribute('data-datevente');
+        var temps = SM_APP.calculerTempsRestant(dv);
+        if (temps) compteurs[i].textContent = temps.texte;
+      }
+    }, 60000);
   }
 </script>
 </body>
