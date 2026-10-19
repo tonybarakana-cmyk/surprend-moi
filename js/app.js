@@ -13,6 +13,14 @@
     return Number(n).toLocaleString('fr-FR') + ' FBu';
   }
 
+  function optimiserUrlCloudinary(url, largeur) {
+    if (!url) return url;
+    if (url.indexOf('res.cloudinary.com') === -1) return url;
+    if (url.indexOf('/upload/') === -1) return url;
+    var transformation = 'w_' + (largeur || 300) + ',q_auto,f_auto';
+    return url.replace('/upload/', '/upload/' + transformation + '/');
+  }
+
   function creerCarteProduit(p, options) {
     options = options || {};
     var div = document.createElement('div');
@@ -25,10 +33,11 @@
       'Bonjour, je suis interesse par : ' + p.nom + ' (' + p.prix + ' FBu) - vu sur Surprend Moi'
     );
     var lienWA = 'https://wa.me/' + tel + '?text=' + msgWA;
+    var photoOptimisee = optimiserUrlCloudinary(p.photo, 300);
 
     var html =
       '<div class="produit-media">' +
-        '<img class="produit-img" src="' + escapeHtml(p.photo) + '" alt="' + escapeHtml(p.nom) + '" loading="lazy" decoding="async">' +
+        '<img class="produit-img" src="' + escapeHtml(photoOptimisee) + '" alt="' + escapeHtml(p.nom) + '" loading="lazy" decoding="async">' +
         '<a class="produit-discuter" href="' + lienWA + '" target="_blank" rel="noopener" data-produit="' + escapeHtml(p.nom) + '">Discuter</a>' +
       '</div>' +
       '<div class="produit-info">' +
@@ -63,6 +72,7 @@
     qs: qs,
     escapeHtml: escapeHtml,
     formaterPrix: formaterPrix,
-    creerCarteProduit: creerCarteProduit
+    creerCarteProduit: creerCarteProduit,
+    optimiserUrlCloudinary: optimiserUrlCloudinary
   };
 })();
