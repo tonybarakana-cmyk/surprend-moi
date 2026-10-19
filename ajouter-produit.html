@@ -24,7 +24,7 @@
       <div class="form-group">
         <label>Photo du produit</label>
         <label class="upload-zone" for="photoInput">
-          <div>Clique pour choisir une photo</div>
+          <div id="uploadTexte">Clique pour choisir une photo</div>
           <div class="form-hint">Format JPG ou PNG. Optimisee automatiquement.</div>
           <input type="file" id="photoInput" accept="image/*">
           <img id="preview" class="upload-preview hidden">
@@ -79,11 +79,16 @@
   document.getElementById('photoInput').addEventListener('change', function (e) {
     var file = e.target.files[0];
     if (!file) return;
-    SM_PRODUITS.compresserImage(file, 800, 0.75).then(function (dataUrl) {
+    var txt = document.getElementById('uploadTexte');
+    txt.textContent = 'Compression...';
+    SM_PRODUITS.compresserImage(file, 600, 0.65).then(function (dataUrl) {
       photoData = dataUrl;
       var prev = document.getElementById('preview');
       prev.src = dataUrl;
       prev.classList.remove('hidden');
+      txt.textContent = 'Photo prete';
+    }).catch(function () {
+      txt.textContent = 'Erreur de compression';
     });
   });
 
@@ -96,7 +101,7 @@
     var btn = document.getElementById('btnP');
     var alerte = document.getElementById('alerte');
     btn.disabled = true;
-    btn.textContent = 'Publication...';
+    btn.textContent = 'Upload...';
 
     SM_PRODUITS.ajouterProduit({
       nom: document.getElementById('pNom').value.trim(),

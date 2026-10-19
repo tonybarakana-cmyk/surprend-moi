@@ -3,7 +3,9 @@ var CONFIG = {
   APP_NAME: 'Surprend Moi',
   ADMIN_EMAIL: 'admin@surprendmoi.bi',
   SESSION_KEY: 'sm_session',
-  VERSION: '1.0.0'
+  VERSION: '1.1.0',
+  CLOUDINARY_CLOUD_NAME: 'mtwv68nx',
+  CLOUDINARY_PRESET: 'surprend_moi'
 };
 
 window.CONFIG = CONFIG;
