@@ -17,7 +17,7 @@
     if (!url) return url;
     if (url.indexOf('res.cloudinary.com') === -1) return url;
     if (url.indexOf('/upload/') === -1) return url;
-    var transformation = 'w_' + (largeur || 300) + ',q_auto,f_auto';
+    var transformation = 'w_' + (largeur || 400) + ',q_auto,f_auto';
     return url.replace('/upload/', '/upload/' + transformation + '/');
   }
 
@@ -46,21 +46,29 @@
       'Bonjour, je suis interesse par : ' + p.nom + ' (' + p.prix + ' FBu) - vu sur Surprend Moi'
     );
     var lienWA = 'https://wa.me/' + tel + '?text=' + msgWA;
-    var photoOptimisee = optimiserUrlCloudinary(p.photo, 300);
+    var photoOptimisee = optimiserUrlCloudinary(p.photo, 400);
     var estVendu = p.statut === 'vendu';
 
-    var badge = estVendu ? '<span class="badge-vendu">VENDU</span>' : '';
+    var badgeCat = !estVendu && p.categorie ? '<span class="badge-cat">' + escapeHtml(p.categorie) + '</span>' : '';
+    var badgeVendu = estVendu ? '<span class="badge-vendu">VENDU</span>' : '';
+    var iconCoeur = '<div class="badge-fav"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></div>';
 
     var html =
       '<div class="produit-media">' +
         '<img class="produit-img" src="' + escapeHtml(photoOptimisee) + '" alt="' + escapeHtml(p.nom) + '" loading="lazy" decoding="async">' +
-        badge +
-        '<a class="produit-discuter" href="' + lienWA + '" target="_blank" rel="noopener" data-produit="' + escapeHtml(p.nom) + '">Discuter</a>' +
+        badgeCat + badgeVendu + iconCoeur +
       '</div>' +
       '<div class="produit-info">' +
         '<div class="produit-nom">' + escapeHtml(p.nom) + '</div>' +
         '<div class="produit-prix">' + formaterPrix(p.prix) + '</div>' +
-        '<div class="produit-vendeur">' + escapeHtml(p.zone || '') + ' - ' + escapeHtml(p.boutique || p.vendeur || '') + '</div>';
+        '<div class="produit-meta">' +
+          '<span>' + escapeHtml(p.boutique || p.vendeur || '') + '</span>' +
+          '<span>' + escapeHtml(p.zone || '') + '</span>' +
+        '</div>' +
+        '<a class="produit-discuter" href="' + lienWA + '" target="_blank" rel="noopener" data-produit="' + escapeHtml(p.nom) + '">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>' +
+          'Discuter' +
+        '</a>';
 
     if (options.actions === 'disponible') {
       html += '<div class="produit-actions">' +
