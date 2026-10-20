@@ -60,17 +60,27 @@
     var password = document.getElementById('password').value;
 
     SM_AUTH.connexion(email, password).then(function (res) {
+      // Vérification stricte de la réponse
       if (res.error || !res.user) {
         throw new Error(res.error || 'Email ou mot de passe incorrect');
       }
+      
+      // Sauvegarde de la session
       SM_AUTH.saveSession(res.user);
-      if (res.user.role === 'admin') {
-        location.href = 'dashboard-admin.html';
-      } else if (res.user.role === 'vendeur') {
-        location.href = 'dashboard-vendeur.html';
+      
+      // Redirection selon le rôle
+      var role = res.user.role;
+      if (role === 'admin') {
+        window.location.replace('dashboard-admin.html');
+      } else if (role === 'vendeur') {
+        window.location.replace('dashboard-vendeur.html');
+      } else if (role === 'client') {
+        window.location.replace('dashboard-client.html');
       } else {
-        location.href = 'dashboard-client.html';
+        // Sécurité au cas où le rôle est manquant
+        throw new Error('Rôle utilisateur non reconnu. Contactez le support.');
       }
+      
     }).catch(function (err) {
       alerte.className = 'alert alert-error';
       alerte.textContent = err.message;
