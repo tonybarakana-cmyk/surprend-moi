@@ -3,38 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0b0b10">
 <title>S'inscrire - Surprend Moi</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="header">
-  <a href="index.html" class="brand">Surprend Moi</a>
-  <div class="header-actions">
-    <a href="connexion.html" class="btn btn-ghost">Connexion</a>
+  <div class="header-container" style="justify-content: center;">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Surprend Moi" class="logo">
+    </a>
   </div>
 </header>
 
 <main class="container-narrow">
-  <h1 class="section-title" style="text-align:center;">Choisis ton type de compte</h1>
-  <p style="text-align:center;color:var(--text-soft);margin-bottom:24px;">Tu peux t'inscrire comme client pour suivre tes commandes, ou comme vendeur pour publier tes produits.</p>
+  <h1 class="section-title" style="text-align:center; margin-top: 20px;">Choisis ton type de compte</h1>
+  <p style="text-align:center; color:var(--text-soft); margin-bottom:24px;">Tu peux t'inscrire comme client pour suivre tes commandes, ou comme vendeur pour publier tes produits.</p>
 
   <div class="choices">
     <a href="inscription-client.html" class="choice-card">
       <h3>Client</h3>
       <p>Suis tes commandes, garde tes vendeurs favoris.</p>
-      <span class="btn btn-ghost btn-block">Continuer</span>
+      <span class="btn btn-ghost" style="width: 100%;">Continuer</span>
     </a>
     <a href="inscription-vendeur.html" class="choice-card">
       <h3>Vendeur</h3>
       <p>Publie tes produits, recois des clients sur WhatsApp.</p>
-      <span class="btn btn-primary btn-block">Continuer</span>
+      <span class="btn btn-primary" style="width: 100%;">Continuer</span>
     </a>
   </div>
 </main>
 
-<footer class="footer">Surprend Moi</footer>
+<footer class="footer" style="margin-top: 60px; padding: 20px; text-align: center;">
+  <p style="font-size: 12px; color: var(--text-mute);">&copy; 2025 SurprendMoi. Tous droits reserves.</p>
+</footer>
 
 <script src="js/config.js"></script>
 <script src="js/track.js"></script>

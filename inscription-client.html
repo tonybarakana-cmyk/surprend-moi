@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>S'inscrire - Surprend Moi</title>
+<title>Inscription client - Surprend Moi</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -17,20 +17,35 @@
 </header>
 
 <main class="container-narrow">
-  <h1 class="section-title" style="text-align:center; margin-top: 20px;">Choisis ton type de compte</h1>
-  <p style="text-align:center; color:var(--text-soft); margin-bottom:24px;">Tu peux t'inscrire comme client pour suivre tes commandes, ou comme vendeur pour publier tes produits.</p>
+  <div class="card">
+    <h2 class="card-title">Creer un compte client</h2>
 
-  <div class="choices">
-    <a href="inscription-client.html" class="choice-card">
-      <h3>Client</h3>
-      <p>Suis tes commandes, garde tes vendeurs favoris.</p>
-      <span class="btn btn-ghost" style="width: 100%;">Continuer</span>
-    </a>
-    <a href="inscription-vendeur.html" class="choice-card">
-      <h3>Vendeur</h3>
-      <p>Publie tes produits, recois des clients sur WhatsApp.</p>
-      <span class="btn btn-primary" style="width: 100%;">Continuer</span>
-    </a>
+    <form id="formClient">
+      <div class="form-group">
+        <label>Nom complet</label>
+        <input type="text" id="cNom" required placeholder="Jean Dupont">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="cEmail" required placeholder="votre@email.com">
+      </div>
+      <div class="form-group">
+        <label>Telephone WhatsApp</label>
+        <input type="tel" id="cTel" required placeholder="257XXXXXXXX">
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="cPass" required minlength="6" placeholder="Minimum 6 caracteres">
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="btnC" style="width: 100%; margin-top: 10px;">Creer mon compte</button>
+    </form>
+
+    <div id="alerte" class="alert hidden"></div>
+
+    <p style="text-align:center; color:var(--text-soft); font-size:14px; margin-top:24px;">
+      Deja un compte ? <a href="connexion.html" style="color:var(--accent-1); font-weight:bold; text-decoration:none;">Se connecter</a>
+    </p>
   </div>
 </main>
 
@@ -40,5 +55,35 @@
 
 <script src="js/config.js"></script>
 <script src="js/track.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  document.getElementById('formClient').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = document.getElementById('btnC');
+    var alerte = document.getElementById('alerte');
+    btn.disabled = true;
+    btn.textContent = 'Creation...';
+
+    SM_AUTH.inscrireClient({
+      nom: document.getElementById('cNom').value.trim(),
+      email: document.getElementById('cEmail').value.trim().toLowerCase(),
+      telephone: document.getElementById('cTel').value.trim(),
+      password: document.getElementById('cPass').value
+    }).then(function () {
+      alerte.className = 'alert alert-success';
+      alerte.textContent = 'Compte cree. Tu peux te connecter.';
+      alerte.classList.remove('hidden');
+      document.getElementById('formClient').reset();
+      setTimeout(function () { location.href = 'connexion.html'; }, 1500);
+    }).catch(function (err) {
+      alerte.className = 'alert alert-error';
+      alerte.textContent = 'Erreur : ' + err.message;
+      alerte.classList.remove('hidden');
+    }).then(function () {
+      btn.disabled = false;
+      btn.textContent = 'Creer mon compte';
+    });
+  });
+</script>
 </body>
 </html>
