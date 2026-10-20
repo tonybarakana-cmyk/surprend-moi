@@ -3,143 +3,111 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0b0b10">
-<title>Ma boutique - Surprend Moi</title>
+<title>Inscription vendeur - Surprend Moi</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="header">
-  <a href="index.html" class="brand">Surprend Moi</a>
-  <div class="header-actions">
-    <span id="nomVendeur" style="font-size:13px;color:var(--text-soft);"></span>
-    <button id="btnLogout" class="btn btn-ghost btn-small">Deconnexion</button>
+  <div class="header-container" style="justify-content: center;">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Surprend Moi" class="logo">
+    </a>
   </div>
 </header>
 
-<main class="container">
+<main class="container-narrow">
+  <div class="card">
+    <h2 class="card-title">Devenir vendeur</h2>
 
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;flex-wrap:wrap;gap:12px;">
-    <h1 class="section-title" style="margin:0;">Ma boutique</h1>
-    <a href="ajouter-produit.html" class="btn btn-primary">Ajouter un produit</a>
+    <form id="formVendeur">
+      <div class="form-group">
+        <label>Nom complet</label>
+        <input type="text" id="vNom" required placeholder="Votre nom">
+      </div>
+      <div class="form-group">
+        <label>Nom de la boutique</label>
+        <input type="text" id="vBoutique" required placeholder="Ex : Bracelets Jean">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="vEmail" required placeholder="votre@email.com">
+      </div>
+      <div class="form-group">
+        <label>Telephone WhatsApp</label>
+        <input type="tel" id="vTel" required placeholder="257XXXXXXXX">
+        <div class="form-hint">Format international sans le signe plus</div>
+      </div>
+      <div class="form-group">
+        <label>Categorie principale</label>
+        <select id="vCat" required>
+          <option value="">Choisir</option>
+          <option>Bracelets</option>
+          <option>Gateaux</option>
+          <option>Fleurs</option>
+          <option>Rolls Eggs</option>
+          <option>Vetements</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Zone</label>
+        <input type="text" id="vZone" required placeholder="Ex : Bujumbura, Rohero">
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="vPass" required minlength="6" placeholder="Minimum 6 caracteres">
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="btnV" style="width: 100%; margin-top: 10px;">Ouvrir ma boutique</button>
+    </form>
+
+    <div id="alerte" class="alert hidden"></div>
+
+    <p style="text-align:center; color:var(--text-soft); font-size:14px; margin-top:24px;">
+      Deja un compte ? <a href="connexion.html" style="color:var(--accent-1); font-weight:bold; text-decoration:none;">Se connecter</a>
+    </p>
   </div>
-
-  <h2 class="section-title">Mes produits disponibles</h2>
-  <div id="produitsDisponibles" class="produits-grid">
-    <div class="loader" style="grid-column:1/-1;"></div>
-  </div>
-
-  <h2 class="section-title">Vendus recemment</h2>
-  <div id="produitsVendus" class="produits-grid">
-    <div class="loader" style="grid-column:1/-1;"></div>
-  </div>
-
 </main>
 
-<footer class="footer">Surprend Moi</footer>
+<footer class="footer" style="margin-top: 60px; padding: 20px; text-align: center;">
+  <p style="font-size: 12px; color: var(--text-mute);">&copy; 2025 SurprendMoi. Tous droits reserves.</p>
+</footer>
 
 <script src="js/config.js"></script>
 <script src="js/track.js"></script>
 <script src="js/auth.js"></script>
-<script src="js/produits.js"></script>
-<script src="js/app.js"></script>
 <script>
-  var session = SM_AUTH.exigerConnexion('vendeur');
-  if (session) {
-    document.getElementById('nomVendeur').textContent = session.boutique || session.nom || session.email;
+  document.getElementById('formVendeur').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = document.getElementById('btnV');
+    var alerte = document.getElementById('alerte');
+    btn.disabled = true;
+    btn.textContent = 'Creation...';
 
-    document.getElementById('btnLogout').addEventListener('click', function () {
-      SM_AUTH.clearSession();
-      location.href = 'index.html';
+    SM_AUTH.inscrireVendeur({
+      nom: document.getElementById('vNom').value.trim(),
+      boutique: document.getElementById('vBoutique').value.trim(),
+      email: document.getElementById('vEmail').value.trim().toLowerCase(),
+      telephone: document.getElementById('vTel').value.trim(),
+      categorie: document.getElementById('vCat').value,
+      zone: document.getElementById('vZone').value.trim(),
+      password: document.getElementById('vPass').value
+    }).then(function () {
+      alerte.className = 'alert alert-success';
+      alerte.textContent = 'Boutique creee. Connecte-toi pour ajouter tes produits.';
+      alerte.classList.remove('hidden');
+      document.getElementById('formVendeur').reset();
+      setTimeout(function () { location.href = 'connexion.html'; }, 1500);
+    }).catch(function (err) {
+      alerte.className = 'alert alert-error';
+      alerte.textContent = 'Erreur : ' + err.message;
+      alerte.classList.remove('hidden');
+    }).then(function () {
+      btn.disabled = false;
+      btn.textContent = 'Ouvrir ma boutique';
     });
-
-    function charger() {
-      var dispo = document.getElementById('produitsDisponibles');
-      var vendus = document.getElementById('produitsVendus');
-      dispo.innerHTML = '<div class="loader" style="grid-column:1/-1;"></div>';
-      vendus.innerHTML = '<div class="loader" style="grid-column:1/-1;"></div>';
-
-      SM_PRODUITS.mesProduits().then(function (liste) {
-        var disponibles = [];
-        var vendusListe = [];
-        for (var i = 0; i < liste.length; i++) {
-          if (liste[i].statut === 'vendu') {
-            vendusListe.push(liste[i]);
-          } else {
-            disponibles.push(liste[i]);
-          }
-        }
-
-        dispo.innerHTML = '';
-        if (!disponibles.length) {
-          dispo.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h3>Aucun produit disponible</h3><p>Ajoute ton premier produit.</p></div>';
-        } else {
-          for (var j = 0; j < disponibles.length; j++) {
-            var carte = SM_APP.creerCarteProduit(disponibles[j], { actions: 'disponible' });
-            attacherActions(carte);
-            dispo.appendChild(carte);
-          }
-        }
-
-        vendus.innerHTML = '';
-        if (!vendusListe.length) {
-          vendus.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h3>Aucun produit vendu recemment</h3></div>';
-        } else {
-          for (var k = 0; k < vendusListe.length; k++) {
-            var carteV = SM_APP.creerCarteProduit(vendusListe[k], { actions: 'vendu' });
-            attacherActions(carteV);
-            vendus.appendChild(carteV);
-          }
-        }
-      });
-    }
-
-    function attacherActions(carte) {
-      var btnMarquer = carte.querySelector('.btn-marquer');
-      if (btnMarquer) {
-        btnMarquer.addEventListener('click', function () {
-          var id = this.getAttribute('data-id');
-          if (!confirm('Marquer ce produit comme vendu ?')) return;
-          SM_PRODUITS.marquerVendu(id).then(function () {
-            charger();
-          });
-        });
-      }
-
-      var btnRestaurer = carte.querySelector('.btn-restaurer');
-      if (btnRestaurer) {
-        btnRestaurer.addEventListener('click', function () {
-          var id = this.getAttribute('data-id');
-          if (!confirm('Restaurer ce produit ?')) return;
-          SM_PRODUITS.restaurerProduit(id).then(function () {
-            charger();
-          });
-        });
-      }
-
-      var btnSuppr = carte.querySelector('.btn-supprimer');
-      if (btnSuppr) {
-        btnSuppr.addEventListener('click', function () {
-          var id = this.getAttribute('data-id');
-          if (!confirm('Supprimer ce produit ?')) return;
-          SM_PRODUITS.supprimerProduit(id).then(function () {
-            charger();
-          });
-        });
-      }
-    }
-
-    charger();
-
-    setInterval(function () {
-      var compteurs = document.querySelectorAll('.compte-a-rebours');
-      for (var i = 0; i < compteurs.length; i++) {
-        var dv = compteurs[i].getAttribute('data-datevente');
-        var temps = SM_APP.calculerTempsRestant(dv);
-        if (temps) compteurs[i].textContent = temps.texte;
-      }
-    }, 60000);
-  }
+  });
 </script>
 </body>
 </html>
