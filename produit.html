@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Détail du produit - Surprend Moi</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  /* Styles spécifiques à la page produit */
+  .product-page { max-width: 600px; margin: 0 auto; padding: 20px 16px 100px; }
+  .product-image-main { width: 100%; border-radius: 20px; background: #1a1a1a; display: block; aspect-ratio: 1; object-fit: cover; }
+  .product-header { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 20px; }
+  .product-title { font-size: 22px; font-weight: 900; line-height: 1.2; }
+  .product-price { font-size: 26px; font-weight: 900; color: var(--accent-1); margin-top: 8px; }
+  .badge-stock { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+  .vendor-card { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-top: 24px; }
+  .vendor-avatar { width: 48px; height: 48px; background: var(--accent-2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 20px; color: #fff; }
+  .vendor-info h4 { font-size: 15px; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
+  .vendor-info p { font-size: 12px; color: var(--text-soft); }
+  .description-block { margin-top: 24px; }
+  .description-block h3 { font-size: 16px; margin-bottom: 8px; font-weight: 800; }
+  .description-block p { font-size: 14px; color: var(--text-soft); line-height: 1.6; }
+  .action-buttons { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg); padding: 16px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; z-index: 100; }
+  @media (min-width: 768px) { .action-buttons { position: static; background: transparent; border: none; padding: 0; margin-top: 30px; } }
+  .btn-wa { background: var(--accent-1); color: #000; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 16px; display: flex; justify-content: center; align-items: center; gap: 10px; text-decoration: none; }
+  .btn-fav { background: transparent; color: #fff; border: 1px solid var(--border); padding: 14px; border-radius: 12px; font-weight: 700; font-size: 15px; display: flex; justify-content: center; align-items: center; gap: 10px; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-container" style="justify-content: flex-start;">
+    <button onclick="history.back()" style="background:none; border:none; color:#fff; cursor:pointer; margin-right: 15px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    </button>
+    <a href="index.html" class="brand">
+      <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_150,q_auto,f_auto/v1792677426/mfd0dxaprxrc6u5pjmo9.png" alt="Surprend Moi" class="logo" style="height: 30px;">
+    </a>
+  </div>
+</header>
+
+<main class="product-page" id="app">
+  <div class="loader"></div>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/track.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/produits.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var params = new URLSearchParams(location.search);
+    var id = params.get('id');
+    var app = document.getElementById('app');
+
+    if (!id) {
+      app.innerHTML = '<h2 style="text-align:center;">Produit introuvable</h2>';
+      return;
+    }
+
+    // On charge tous les produits pour trouver celui qui correspond à l'ID
+    SM_PRODUITS.tousProduits().then(function(liste) {
+      var produit = liste.find(function(p) { return p.id === id; });
+      
+      if (!produit) {
+        app.innerHTML = '<h2 style="text-align:center;">Produit introuvable</h2>';
+        return;
+      }
+
+      var tel = String(produit.telephone).replace(/[^0-9]/g, '');
+      var msgWA = encodeURIComponent('Bonjour, je suis intéressé par : ' + produit.nom + ' (' + produit.prix + ' FBu) - vu sur Surprend Moi');
+      var lienWA = 'https://wa.me/' + tel + '?text=' + msgWA;
+      var initiale = (produit.boutique || produit.vendeur || 'V').charAt(0).toUpperCase();
+      var photoUrl = SM_APP.optimiserUrlCloudinary(produit.photo, 600);
+
+      app.innerHTML = `
+        <img src="${photoUrl}" class="product-image-main" alt="${produit.nom}">
+        
+        <div class="product-header">
+          <div>
+            <h1 class="product-title">${produit.nom}</h1>
+            <div class="product-price">${SM_APP.formaterPrix(produit.prix)}</div>
+          </div>
+          <div class="badge-stock">En stock</div>
+        </div>
+
+        <div class="vendor-card">
+          <div class="vendor-avatar">${initiale}</div>
+          <div class="vendor-info">
+            <h4>${produit.boutique || produit.vendeur} <svg width="14" height="14" viewBox="0 0 24 24" fill="#22C55E"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></h4>
+            <p>Vendeur certifié • ${produit.zone || 'Bujumbura'}</p>
+          </div>
+        </div>
+
+        <div class="description-block">
+          <h3>Description</h3>
+          <p>${produit.description || 'Aucune description fournie par le vendeur.'}</p>
+        </div>
+
+        <div class="action-buttons">
+          <a href="${lienWA}" target="_blank" class="btn-wa" onclick="window.track('negociation', {produit: '${produit.nom}', vendeur: '${produit.boutique}', prix: ${produit.prix}})">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            Contacter sur WhatsApp
+          </a>
+          <button class="btn-fav">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            Ajouter aux favoris
+          </button>
+        </div>
+      `;
+    }).catch(function() {
+      app.innerHTML = '<h2 style="text-align:center;">Erreur de chargement</h2>';
+    });
+  });
+</script>
+</body>
+</html>
