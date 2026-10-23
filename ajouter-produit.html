@@ -3,16 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0b0b10">
 <title>Ajouter un produit - Surprend Moi</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="header">
-  <a href="index.html" class="brand">Surprend Moi</a>
-  <div class="header-actions">
-    <a href="dashboard-vendeur.html" class="btn btn-ghost btn-small">Retour</a>
+  <div class="header-container" style="justify-content: space-between;">
+    <a href="index.html" class="brand">
+      <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_150,q_auto,f_auto/v1792677426/mfd0dxaprxrc6u5pjmo9.png" alt="Surprend Moi" class="logo">
+    </a>
+    <a href="dashboard-vendeur.html" class="btn btn-ghost">Retour</a>
   </div>
 </header>
 
@@ -25,7 +26,6 @@
         <label>Photo du produit</label>
         <label class="upload-zone" for="photoInput">
           <div id="uploadTexte">Clique pour choisir une photo</div>
-          <div class="form-hint">Format JPG ou PNG. Optimisee automatiquement.</div>
           <input type="file" id="photoInput" accept="image/*">
           <img id="preview" class="upload-preview hidden">
         </label>
@@ -59,14 +59,12 @@
         <textarea id="pDesc" required maxlength="400"></textarea>
       </div>
 
-      <button type="submit" class="btn btn-primary btn-block" id="btnP">Publier</button>
+      <button type="submit" class="btn btn-primary" id="btnP" style="width: 100%;">Publier</button>
     </form>
 
     <div id="alerte" class="alert hidden"></div>
   </div>
 </main>
-
-<footer class="footer">Surprend Moi</footer>
 
 <script src="js/config.js"></script>
 <script src="js/track.js"></script>
@@ -94,10 +92,7 @@
 
   document.getElementById('formProduit').addEventListener('submit', function (e) {
     e.preventDefault();
-    if (!photoData) {
-      alert('Ajoute une photo');
-      return;
-    }
+    if (!photoData) { alert('Ajoute une photo'); return; }
     var btn = document.getElementById('btnP');
     var alerte = document.getElementById('alerte');
     btn.disabled = true;

@@ -11,7 +11,7 @@
 <header class="header">
   <div class="header-container" style="justify-content: center;">
     <a href="index.html" class="brand">
-      <img src="images/logo.png" alt="Surprend Moi" class="logo">
+      <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_150,q_auto,f_auto/v1792677426/mfd0dxaprxrc6u5pjmo9.png" alt="Surprend Moi" class="logo">
     </a>
   </div>
 </header>
@@ -36,13 +36,13 @@
     <div id="alerte" class="alert hidden"></div>
 
     <p style="text-align:center; color:var(--text-soft); font-size:14px; margin-top:24px;">
-      Pas de compte ? <a href="inscription.html" style="color:var(--accent-1); font-weight:bold; text-decoration:none;">S'inscrire</a>
+      Pas de compte ? <a href="inscription.html" style="color:var(--accent-2); font-weight:bold;">S'inscrire</a>
     </p>
   </div>
 </main>
 
-<footer class="footer" style="margin-top: 60px; padding: 20px; text-align: center;">
-  <p style="font-size: 12px; color: var(--text-mute);">&copy; 2025 SurprendMoi. Tous droits reserves.</p>
+<footer class="footer" style="margin-top: 40px; padding: 20px; text-align: center; border-top: 1px solid var(--border);">
+  <p style="font-size: 12px; color: var(--text-mute);">&copy; 2025 SurprendMoi.</p>
 </footer>
 
 <script src="js/config.js"></script>
@@ -60,27 +60,17 @@
     var password = document.getElementById('password').value;
 
     SM_AUTH.connexion(email, password).then(function (res) {
-      // Vérification stricte de la réponse
       if (res.error || !res.user) {
         throw new Error(res.error || 'Email ou mot de passe incorrect');
       }
-      
-      // Sauvegarde de la session
       SM_AUTH.saveSession(res.user);
-      
-      // Redirection selon le rôle
-      var role = res.user.role;
-      if (role === 'admin') {
-        window.location.replace('dashboard-admin.html');
-      } else if (role === 'vendeur') {
-        window.location.replace('dashboard-vendeur.html');
-      } else if (role === 'client') {
-        window.location.replace('dashboard-client.html');
+      if (res.user.role === 'admin') {
+        location.href = 'dashboard-admin.html';
+      } else if (res.user.role === 'vendeur') {
+        location.href = 'dashboard-vendeur.html';
       } else {
-        // Sécurité au cas où le rôle est manquant
-        throw new Error('Rôle utilisateur non reconnu. Contactez le support.');
+        location.href = 'dashboard-client.html';
       }
-      
     }).catch(function (err) {
       alerte.className = 'alert alert-error';
       alerte.textContent = err.message;

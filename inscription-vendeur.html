@@ -3,24 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0b0b10">
 <title>Inscription vendeur - Surprend Moi</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="header">
-  <a href="index.html" class="brand">Surprend Moi</a>
+  <div class="header-container" style="justify-content: center;">
+    <a href="index.html" class="brand">
+      <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_150,q_auto,f_auto/v1792677426/mfd0dxaprxrc6u5pjmo9.png" alt="Surprend Moi" class="logo">
+    </a>
+  </div>
 </header>
 
 <main class="container-narrow">
-  <div class="card" style="margin-top:24px;">
+  <div class="card">
     <h2 class="card-title">Devenir vendeur</h2>
 
     <form id="formVendeur">
       <div class="form-group">
         <label>Nom complet</label>
-        <input type="text" id="vNom" required>
+        <input type="text" id="vNom" required placeholder="Votre nom">
       </div>
       <div class="form-group">
         <label>Nom de la boutique</label>
@@ -28,7 +31,7 @@
       </div>
       <div class="form-group">
         <label>Email</label>
-        <input type="email" id="vEmail" required>
+        <input type="email" id="vEmail" required placeholder="votre@email.com">
       </div>
       <div class="form-group">
         <label>Telephone WhatsApp</label>
@@ -53,22 +56,23 @@
       </div>
       <div class="form-group">
         <label>Mot de passe</label>
-        <input type="password" id="vPass" required minlength="6">
-        <div class="form-hint">Minimum 6 caracteres</div>
+        <input type="password" id="vPass" required minlength="6" placeholder="Minimum 6 caracteres">
       </div>
 
-      <button type="submit" class="btn btn-primary btn-block" id="btnV">Ouvrir ma boutique</button>
+      <button type="submit" class="btn btn-primary" id="btnV" style="width: 100%; margin-top: 10px;">Ouvrir ma boutique</button>
     </form>
 
     <div id="alerte" class="alert hidden"></div>
 
-    <p style="text-align:center;color:var(--text-soft);font-size:14px;margin-top:18px;">
-      Deja un compte ? <a href="connexion.html" style="color:var(--accent-1);">Se connecter</a>
+    <p style="text-align:center; color:var(--text-soft); font-size:14px; margin-top:24px;">
+      Deja un compte ? <a href="connexion.html" style="color:var(--accent-2); font-weight:bold;">Se connecter</a>
     </p>
   </div>
 </main>
 
-<footer class="footer">Surprend Moi</footer>
+<footer class="footer" style="margin-top: 40px; padding: 20px; text-align: center; border-top: 1px solid var(--border);">
+  <p style="font-size: 12px; color: var(--text-mute);">&copy; 2025 SurprendMoi.</p>
+</footer>
 
 <script src="js/config.js"></script>
 <script src="js/track.js"></script>
@@ -94,7 +98,7 @@
       alerte.textContent = 'Boutique creee. Connecte-toi pour ajouter tes produits.';
       alerte.classList.remove('hidden');
       document.getElementById('formVendeur').reset();
-      setTimeout(function () { location.href = 'connexion.html'; }, 1400);
+      setTimeout(function () { location.href = 'connexion.html'; }, 1500);
     }).catch(function (err) {
       alerte.className = 'alert alert-error';
       alerte.textContent = 'Erreur : ' + err.message;
