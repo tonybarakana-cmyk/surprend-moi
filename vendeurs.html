@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07110B">
 <title>Nos Vendeurs - Surprend Moi</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -17,7 +18,7 @@
       <a href="index.html" class="nav-link">Accueil</a>
       <a href="index.html#produits" class="nav-link">Categories</a>
       <a href="vendeurs.html" class="nav-link active">Vendeurs</a>
-      <a href="a-propos.html" class="nav-link">A propos</a>
+      <a href="mon-compte.html" class="nav-link">Mon Compte</a>
     </nav>
     <div class="header-actions">
       <a href="connexion.html" class="btn btn-ghost">Connexion</a>
@@ -26,7 +27,7 @@
   </div>
 </header>
 
-<main class="main-layout" style="grid-template-columns: 1fr; max-width: 1000px; margin-top: 40px;">
+<main class="main-layout" style="grid-template-columns: 1fr; max-width: 1000px; margin-top: 100px;">
   <div class="section-header">
     <h2 class="section-title">Tous nos vendeurs</h2>
   </div>
@@ -43,12 +44,11 @@
       <a href="index.html">Accueil</a>
       <a href="a-propos.html">A propos</a>
       <a href="#">Contact</a>
+      <a href="confidentialite.html">Politique de confidentialite</a>
     </div>
-    <div class="footer-copy">&copy; 2025 SurprendMoi.</div>
   </div>
 </footer>
 
-<!-- MENU MOBILE (PERMANENT EN BAS) -->
 <nav class="mobile-nav">
   <a href="index.html">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
@@ -62,9 +62,9 @@
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
     Vendeurs
   </a>
-  <a href="a-propos.html">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-    A propos
+  <a href="mon-compte.html">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+    Mon Compte
   </a>
 </nav>
 
@@ -72,15 +72,71 @@
 <script src="js/track.js"></script>
 <script src="js/auth.js"></script>
 <script>
-  setTimeout(function() {
-    document.getElementById('listeVendeurs').innerHTML = `
-      <div class="info-card" style="grid-column: 1/-1; flex-direction: column; text-align: center; padding: 40px;">
-        <h3 style="margin-bottom: 10px; color:#fff;">Rejoignez notre réseau de vendeurs</h3>
-        <p style="margin-bottom: 20px; color: var(--text-soft);">Des dizaines de commerçants burundais nous font déjà confiance.</p>
-        <a href="inscription-vendeur.html" class="btn btn-primary">Devenir vendeur</a>
-      </div>
-    `;
-  }, 500);
+  document.addEventListener('DOMContentLoaded', function() {
+    var container = document.getElementById('listeVendeurs');
+    
+    SM_AUTH.apiGet({ action: 'tous_produits' }).then(function(res) {
+      var produits = res.produits || [];
+      var vendeursMap = {};
+
+      for (var i = 0; i < produits.length; i++) {
+        var p = produits[i];
+        if (p.boutique && !vendeursMap[p.boutique]) {
+          vendeursMap[p.boutique] = {
+            boutique: p.boutique,
+            zone: p.zone || 'Bujumbura',
+            telephone: p.telephone
+          };
+        }
+      }
+
+      var vendeurs = Object.values(vendeursMap);
+      container.innerHTML = '';
+
+      if (vendeurs.length === 0) {
+        container.innerHTML = `
+          <div class="info-card" style="grid-column: 1/-1; flex-direction: column; text-align: center; padding: 40px;">
+            <h3 style="margin-bottom: 10px; color:#fff;">Aucun vendeur pour le moment</h3>
+            <p style="margin-bottom: 20px; color: var(--text-soft);">Soyez le premier à rejoindre notre réseau de vendeurs.</p>
+            <a href="inscription-vendeur.html" class="btn btn-primary">Devenir vendeur</a>
+          </div>
+        `;
+        return;
+      }
+
+      for (var j = 0; j < vendeurs.length; j++) {
+        var v = vendeurs[j];
+        var initiale = v.boutique.charAt(0).toUpperCase();
+        
+        var card = document.createElement('div');
+        card.className = 'info-card';
+        card.style.flexDirection = 'column';
+        card.style.textAlign = 'center';
+        card.style.padding = '24px';
+        card.style.alignItems = 'center';
+        
+        card.innerHTML = `
+          <div style="width: 60px; height: 60px; background: var(--accent-1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: #000; margin-bottom: 16px;">
+            ${initiale}
+          </div>
+          <h4 style="font-size: 18px; margin-bottom: 6px;">${v.boutique}</h4>
+          <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 20px;">${v.zone}</p>
+          <a href="https://wa.me/${v.telephone}" target="_blank" class="btn btn-primary" style="width: 100%;">Contacter</a>
+        `;
+        container.appendChild(card);
+      }
+
+      var btnDiv = document.createElement('div');
+      btnDiv.style.gridColumn = '1/-1';
+      btnDiv.style.textAlign = 'center';
+      btnDiv.style.marginTop = '30px';
+      btnDiv.innerHTML = `<a href="inscription-vendeur.html" class="btn btn-ghost">Vous voulez vendre ? Inscrivez-vous ici</a>`;
+      container.appendChild(btnDiv);
+
+    }).catch(function() {
+      container.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h3>Erreur de chargement</h3></div>';
+    });
+  });
 </script>
 </body>
 </html>

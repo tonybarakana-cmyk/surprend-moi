@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07110B">
+<title>Mon Compte - Surprend Moi</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="header-container">
+    <a href="index.html" class="brand">
+      <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_150,q_auto,f_auto/v1792677426/mfd0dxaprxrc6u5pjmo9.png" alt="Surprend Moi" class="logo">
+    </a>
+    <nav class="nav-main">
+      <a href="index.html" class="nav-link">Accueil</a>
+      <a href="index.html#produits" class="nav-link">Categories</a>
+      <a href="vendeurs.html" class="nav-link">Vendeurs</a>
+      <a href="mon-compte.html" class="nav-link active">Mon Compte</a>
+    </nav>
+    <div class="header-actions">
+      <a href="connexion.html" class="btn btn-ghost" id="btnNavConnexion">Connexion</a>
+      <a href="inscription.html" class="btn btn-primary" id="btnNavInscription">S'inscrire</a>
+    </div>
+  </div>
+</header>
+
+<main class="container-narrow" style="margin-top: 100px;">
+  <div id="app">
+    <div class="loader"></div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-container">
+    <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_120,q_auto,f_auto/v1792677426/mfd0dxaprxrc6u5pjmo9.png" alt="Surprend Moi" class="logo-footer">
+    <div class="footer-links">
+      <a href="index.html">Accueil</a>
+      <a href="a-propos.html">A propos</a>
+      <a href="confidentialite.html">Politique de confidentialite</a>
+    </div>
+  </div>
+</footer>
+
+<nav class="mobile-nav">
+  <a href="index.html">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    Accueil
+  </a>
+  <a href="index.html#produits">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+    Categories
+  </a>
+  <a href="vendeurs.html">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+    Vendeurs
+  </a>
+  <a href="mon-compte.html" class="active">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+    Mon Compte
+  </a>
+</nav>
+
+<script src="js/config.js"></script>
+<script src="js/track.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/produits.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var session = SM_AUTH.getSession();
+    var app = document.getElementById('app');
+    var btnNavConnexion = document.getElementById('btnNavConnexion');
+    var btnNavInscription = document.getElementById('btnNavInscription');
+
+    if (!session) {
+      if (btnNavConnexion) btnNavConnexion.style.display = 'block';
+      if (btnNavInscription) btnNavInscription.style.display = 'block';
+      
+      app.innerHTML = `
+        <div class="card" style="text-align: center;">
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2" style="margin: 0 auto 20px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <h2 class="card-title">Bienvenue sur Surprend Moi</h2>
+          <p style="color: var(--text-soft); margin-bottom: 24px;">Connectez-vous ou créez un compte pour accéder à votre espace personnel et gérer vos produits.</p>
+          <a href="connexion.html" class="btn btn-primary" style="width: 100%; margin-bottom: 12px;">Se connecter</a>
+          <a href="inscription.html" class="btn btn-ghost" style="width: 100%;">Créer un compte</a>
+        </div>
+      `;
+    } else {
+      if (btnNavConnexion) btnNavConnexion.style.display = 'none';
+      if (btnNavInscription) btnNavInscription.style.display = 'none';
+
+      var roleLabel = session.role === 'vendeur' ? 'Vendeur' : (session.role === 'admin' ? 'Administrateur' : 'Client');
+      var initiale = (session.nom || session.email || 'U').charAt(0).toUpperCase();
+      var photoUrl = session.photo || '';
+
+      var html = `
+        <div class="card">
+          <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 24px;">
+            <div style="width: 80px; height: 80px; background: var(--accent-1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 900; color: #000; overflow: hidden; margin-bottom: 16px;">
+              ${photoUrl ? `<img src="${photoUrl}" style="width: 100%; height: 100%; object-fit: cover;">` : initiale}
+            </div>
+            <h2 style="font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 4px;">${session.nom || 'Utilisateur'}</h2>
+            <span style="font-size: 12px; background: rgba(22, 199, 101, 0.2); color: var(--accent-2); padding: 2px 8px; border-radius: 6px; font-weight: 700;">${roleLabel}</span>
+          </div>
+
+          <div style="border-top: 1px solid var(--border); padding-top: 20px; margin-bottom: 20px;">
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 8px;"><strong>Email :</strong> ${session.email}</p>
+            ${session.telephone ? `<p style="font-size: 14px; color: var(--text-soft); margin-bottom: 8px;"><strong>Téléphone :</strong> ${session.telephone}</p>` : ''}
+            ${session.boutique ? `<p style="font-size: 14px; color: var(--text-soft); margin-bottom: 8px;"><strong>Boutique :</strong> ${session.boutique}</p>` : ''}
+            ${session.zone ? `<p style="font-size: 14px; color: var(--text-soft); margin-bottom: 8px;"><strong>Zone :</strong> ${session.zone}</p>` : ''}
+            ${session.specialite ? `<p style="font-size: 14px; color: var(--text-soft); margin-bottom: 8px;"><strong>Spécialité :</strong> ${session.specialite}</p>` : ''}
+          </div>
+
+          <div style="border-top: 1px solid var(--border); padding-top: 20px; margin-bottom: 20px;">
+            <h3 style="font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 16px;">Modifier mon profil</h3>
+            <form id="formProfil">
+              <div class="form-group">
+                <label>Photo de profil</label>
+                <label class="upload-zone" for="photoInput" style="padding: 20px; min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                  <div id="uploadTexte">Cliquez pour changer la photo</div>
+                  <input type="file" id="photoInput" accept="image/*" style="display: none;">
+                  <img id="preview" class="upload-preview hidden" style="max-height: 80px; margin-top: 10px; border-radius: 50%; width: 80px; height: 80px; object-fit: cover;">
+                </label>
+              </div>
+              <div class="form-group">
+                <label>Nom complet</label>
+                <input type="text" id="pNom" value="${session.nom || ''}" required>
+              </div>
+              <div class="form-group">
+                <label>Téléphone</label>
+                <input type="tel" id="pTelephone" value="${session.telephone || ''}" required>
+              </div>
+              ${session.role === 'vendeur' ? `
+              <div class="form-group">
+                <label>Spécialité (ex: Bracelets, Gâteaux...)</label>
+                <input type="text" id="pSpecialite" value="${session.specialite || ''}">
+              </div>
+              ` : ''}
+              <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;" id="btnSave">Enregistrer</button>
+            </form>
+            <div id="alerte" class="alert hidden" style="margin-top: 15px;"></div>
+          </div>
+
+          ${session.role === 'vendeur' ? `
+            <a href="dashboard-vendeur.html" class="btn btn-primary" style="width: 100%; margin-bottom: 12px;">Gérer ma boutique</a>
+            <a href="ajouter-produit.html" class="btn btn-ghost" style="width: 100%; margin-bottom: 12px;">Ajouter un produit</a>
+          ` : ''}
+          ${session.role === 'client' ? `
+            <a href="dashboard-client.html" class="btn btn-primary" style="width: 100%; margin-bottom: 12px;">Voir mes produits favoris</a>
+          ` : ''}
+
+          <button id="btnLogout" class="btn btn-ghost" style="width: 100%; color: #f87171; border-color: rgba(239, 68, 68, 0.3);">Se déconnecter</button>
+        </div>
+      `;
+
+      app.innerHTML = html;
+
+      // Gestion de la photo
+      var photoData = '';
+      document.getElementById('photoInput').addEventListener('change', function (e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var txt = document.getElementById('uploadTexte');
+        txt.textContent = 'Compression...';
+        SM_PRODUITS.compresserImage(file, 400, 0.7).then(function (dataUrl) {
+          photoData = dataUrl;
+          var prev = document.getElementById('preview');
+          prev.src = dataUrl;
+          prev.classList.remove('hidden');
+          txt.textContent = 'Photo prête';
+        }).catch(function () {
+          txt.textContent = 'Erreur';
+        });
+      });
+
+      // Gestion du formulaire
+      document.getElementById('formProfil').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var btn = document.getElementById('btnSave');
+        var alerte = document.getElementById('alerte');
+        btn.disabled = true;
+        btn.textContent = 'Enregistrement...';
+
+        var data = {
+          nom: document.getElementById('pNom').value.trim(),
+          telephone: document.getElementById('pTelephone').value.trim(),
+          photo: photoData,
+          specialite: document.getElementById('pSpecialite') ? document.getElementById('pSpecialite').value.trim() : ''
+        };
+
+        SM_PRODUITS.mettreAJourProfil(data).then(function () {
+          alerte.className = 'alert alert-success';
+          alerte.textContent = 'Profil mis à jour avec succès.';
+          alerte.classList.remove('hidden');
+          
+          session.nom = data.nom;
+          session.telephone = data.telephone;
+          session.specialite = data.specialite;
+          if (photoData) session.photo = photoData;
+          SM_AUTH.saveSession(session);
+
+          setTimeout(function() { location.reload(); }, 1500);
+        }).catch(function (err) {
+          alerte.className = 'alert alert-error';
+          alerte.textContent = 'Erreur : ' + err.message;
+          alerte.classList.remove('hidden');
+          btn.disabled = false;
+          btn.textContent = 'Enregistrer';
+        });
+      });
+
+      document.getElementById('btnLogout').addEventListener('click', function() {
+        SM_AUTH.clearSession();
+        location.href = 'index.html';
+      });
+    }
+  });
+</script>
+</body>
+</html>

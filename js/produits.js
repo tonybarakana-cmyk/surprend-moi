@@ -107,6 +107,27 @@
     });
   }
 
+  function mettreAJourProfil(data) {
+    var s = window.SM_AUTH.getSession();
+    if (!s) return Promise.reject(new Error('Non connecte'));
+    
+    var uploadPromise = (data.photo && data.photo.indexOf('data:') === 0)
+      ? uploaderCloudinary(data.photo)
+      : Promise.resolve(data.photo || '');
+
+    return uploadPromise.then(function (photoUrl) {
+      return apiPost({
+        action: 'mettre_a_jour_profil',
+        role: s.role,
+        email: s.email,
+        nom: data.nom,
+        telephone: data.telephone,
+        photo: photoUrl,
+        specialite: data.specialite || ''
+      });
+    });
+  }
+
   function mesProduits() {
     var s = window.SM_AUTH.getSession();
     if (!s) return Promise.resolve([]);
@@ -135,6 +156,7 @@
     tousProduits: tousProduits,
     produitsVendeur: produitsVendeur,
     compresserImage: compresserImage,
-    uploaderCloudinary: uploaderCloudinary
+    uploaderCloudinary: uploaderCloudinary,
+    mettreAJourProfil: mettreAJourProfil
   };
 })();
