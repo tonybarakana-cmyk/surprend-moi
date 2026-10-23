@@ -71,26 +71,12 @@
 <script src="js/config.js"></script>
 <script src="js/track.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/produits.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     var container = document.getElementById('listeVendeurs');
     
-    SM_AUTH.apiGet({ action: 'tous_produits' }).then(function(res) {
-      var produits = res.produits || [];
-      var vendeursMap = {};
-
-      for (var i = 0; i < produits.length; i++) {
-        var p = produits[i];
-        if (p.boutique && !vendeursMap[p.boutique]) {
-          vendeursMap[p.boutique] = {
-            boutique: p.boutique,
-            zone: p.zone || 'Bujumbura',
-            telephone: p.telephone
-          };
-        }
-      }
-
-      var vendeurs = Object.values(vendeursMap);
+    SM_PRODUITS.tousVendeurs().then(function(vendeurs) {
       container.innerHTML = '';
 
       if (vendeurs.length === 0) {
@@ -107,6 +93,9 @@
       for (var j = 0; j < vendeurs.length; j++) {
         var v = vendeurs[j];
         var initiale = v.boutique.charAt(0).toUpperCase();
+        var photoHtml = v.photo 
+          ? `<img src="${v.photo}" style="width: 100%; height: 100%; object-fit: cover;">` 
+          : initiale;
         
         var card = document.createElement('div');
         card.className = 'info-card';
@@ -116,11 +105,12 @@
         card.style.alignItems = 'center';
         
         card.innerHTML = `
-          <div style="width: 60px; height: 60px; background: var(--accent-1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: #000; margin-bottom: 16px;">
-            ${initiale}
+          <div style="width: 60px; height: 60px; background: var(--accent-1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: #000; margin-bottom: 16px; overflow: hidden; border: 2px solid var(--accent-2);">
+            ${photoHtml}
           </div>
           <h4 style="font-size: 18px; margin-bottom: 6px;">${v.boutique}</h4>
-          <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 20px;">${v.zone}</p>
+          <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 8px;">${v.zone}</p>
+          ${v.specialite ? `<p style="font-size: 12px; background: rgba(22,199,101,0.1); color: var(--accent-2); padding: 4px 10px; border-radius: 6px; margin-bottom: 16px;">Spécialité : ${v.specialite}</p>` : '<div style="margin-bottom:16px;"></div>'}
           <a href="https://wa.me/${v.telephone}" target="_blank" class="btn btn-primary" style="width: 100%;">Contacter</a>
         `;
         container.appendChild(card);
@@ -133,7 +123,8 @@
       btnDiv.innerHTML = `<a href="inscription-vendeur.html" class="btn btn-ghost">Vous voulez vendre ? Inscrivez-vous ici</a>`;
       container.appendChild(btnDiv);
 
-    }).catch(function() {
+    }).catch(function(err) {
+      console.error(err);
       container.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h3>Erreur de chargement</h3></div>';
     });
   });

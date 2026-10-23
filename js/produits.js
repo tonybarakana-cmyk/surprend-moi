@@ -142,6 +142,11 @@
       .then(function (r) { return r.produits || []; });
   }
 
+  function tousVendeurs() {
+    return window.SM_AUTH.apiGet({ action: 'tous_vendeurs' })
+      .then(function (r) { return r.vendeurs || []; });
+  }
+
   function produitsVendeur(email) {
     return window.SM_AUTH.apiGet({ action: 'produits_vendeur', email: email })
       .then(function (r) { return r.produits || []; });
@@ -154,6 +159,7 @@
     restaurerProduit: restaurerProduit,
     mesProduits: mesProduits,
     tousProduits: tousProduits,
+    tousVendeurs: tousVendeurs,
     produitsVendeur: produitsVendeur,
     compresserImage: compresserImage,
     uploaderCloudinary: uploaderCloudinary,
