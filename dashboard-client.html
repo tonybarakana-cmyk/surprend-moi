@@ -3,60 +3,192 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mon compte - Surprend Moi</title>
+<meta name="theme-color" content="#07110B">
+<title>Mon Espace - Surprend Moi</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
+<!-- HEADER (Avec Profil Client) -->
 <header class="header">
   <div class="header-container">
-    <a href="index.html" class="brand">
-      <img src="images/logo.png" alt="Surprend Moi" class="logo">
+    <a href="dashboard-client.html" class="brand">
+      <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_150,q_auto,f_auto/v1792677426/mfd0dxaprxrc6u5pjmo9.png" alt="Surprend Moi" class="logo">
     </a>
+    
+    <nav class="nav-main">
+      <a href="dashboard-client.html" class="nav-link active">Accueil</a>
+      <a href="dashboard-client.html#produits" class="nav-link">Categories</a>
+      <a href="vendeurs.html" class="nav-link">Vendeurs</a>
+      <a href="mon-compte.html" class="nav-link">Mon Compte</a>
+    </nav>
+
     <div class="header-actions">
-      <span id="nomClient" style="font-size:14px; color:var(--text-soft); margin-right:10px;"></span>
-      <button id="btnLogout" class="btn btn-ghost">Deconnexion</button>
+      <!-- PROFIL CLIENT (Cliquable) -->
+      <a href="mon-compte.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none; cursor: pointer;">
+        <div id="avatarClient" style="width: 44px; height: 44px; background: var(--accent-1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; color: #000; overflow: hidden; border: 2px solid var(--accent-2);">
+          <!-- Initiale ou Photo injectée par JS -->
+        </div>
+        <div class="client-info" style="display: none;">
+          <span id="nomClient" style="display: block; font-size: 14px; color: #fff; font-weight: 800;">Client</span>
+          <span style="display: block; font-size: 11px; color: var(--accent-2);">Modifier mon profil</span>
+        </div>
+      </a>
+      
+      <button id="btnLogout" class="btn btn-ghost" style="color: #f87171; border-color: rgba(239, 68, 68, 0.3); padding: 8px 16px; font-size: 13px;">Deconnexion</button>
     </div>
   </div>
 </header>
 
-<main class="container" style="max-width: 1200px; margin-top: 30px;">
-  
-  <div class="section-header">
-    <h1 class="section-title">Produits disponibles</h1>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <span class="badge-welcome">Bienvenue sur</span>
+    <h1 class="hero-title">Surprend<span>Moi</span></h1>
+    <h2 class="hero-subtitle">Le marché en un clic</h2>
+    <p class="hero-text">Trouvez facilement les meilleurs produits au Burundi. Parcourez, choisissez et discutez directement avec le vendeur via WhatsApp.</p>
+    <a href="#produits" class="btn btn-primary btn-lg">Voir les produits</a>
   </div>
+  <div class="hero-image-container">
+    <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_600,q_auto,f_auto/v1792677047/tduy8ief1mq0lbec0etu.png" alt="Achetez sur WhatsApp" class="hero-image">
+  </div>
+</section>
 
-  <!-- Barre de recherche avancée -->
-  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 30px;">
-    <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
-      <input type="text" id="rechercheMot" placeholder="Rechercher un produit..." style="flex: 1; min-width: 200px; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); color: #fff; outline: none;">
-      <select id="rechercheCat" style="padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); color: #fff; outline: none; min-width: 150px;">
-        <option value="">Toutes categories</option>
-      </select>
+<!-- RECHERCHE MOBILE -->
+<div class="mobile-search-container">
+  <div class="mobile-search-box">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 10px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <input type="text" id="searchHeaderMobile" placeholder="Rechercher un produit, une categorie...">
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="categories-section">
+  <div class="categories-scroll" id="categoriesList">
+    <button class="cat-btn active" data-cat="Tout">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      <span>Tout</span>
+    </button>
+  </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<main class="main-layout" id="produits">
+  <div class="products-column">
+    <!-- BARRE DE RECHERCHE ORDINATEUR -->
+    <div class="desktop-search-wrapper">
+      <div class="desktop-search-box">
+        <input type="text" id="searchHeaderPC" placeholder="Rechercher un produit, une categorie...">
+        <button class="search-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+      </div>
     </div>
-    <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
-      <input type="number" id="prixMin" placeholder="Prix min" style="flex: 1; min-width: 120px; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); color: #fff; outline: none;">
-      <input type="number" id="prixMax" placeholder="Prix max" style="flex: 1; min-width: 120px; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); color: #fff; outline: none;">
-      <button id="btnReset" class="btn btn-ghost" style="padding: 12px 20px;">Reinitialiser</button>
+
+    <div class="section-header">
+      <h2 class="section-title">Produits recents</h2>
+      <a href="dashboard-client.html#produits" class="link-all">Voir tous →</a>
+    </div>
+
+    <div id="resultatCount" class="result-count"></div>
+    
+    <div id="produitsClient" class="produits-grid">
+      <div class="loader"></div>
+    </div>
+    
+    <div class="empty-state hidden" id="vide">
+      <h3>Aucun produit trouve</h3>
     </div>
   </div>
 
-  <p id="resultatCount" style="color:var(--text-soft); font-size:14px; margin-bottom: 20px;"></p>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="info-card">
+      <div class="info-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00E676" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      </div>
+      <div>
+        <h4>Vendeurs de confiance</h4>
+        <p>Des vendeurs verifies pour une meilleure experience.</p>
+      </div>
+    </div>
+    
+    <div class="info-card">
+      <div class="info-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00E676" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+      </div>
+      <div>
+        <h4>Livraison rapide</h4>
+        <p>Retrait ou livraison selon votre zone.</p>
+      </div>
+    </div>
 
-  <div id="produitsClient" class="produits-grid">
-    <div class="loader"></div>
-  </div>
+    <div class="info-card">
+      <div class="info-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00E676" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+      </div>
+      <div>
+        <h4>Negociation facile</h4>
+        <p>Discutez directement sur WhatsApp avec le vendeur.</p>
+      </div>
+    </div>
 
-  <div class="empty-state hidden" id="vide" style="margin-top:40px;">
-    <h3>Aucun produit trouve</h3>
-    <p>Essaie un autre mot-cle ou une autre categorie.</p>
-  </div>
+    <!-- BOUTON PARTAGER -->
+    <button id="btnShare" class="btn btn-primary" style="width: 100%; padding: 14px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+      Partager l'application
+    </button>
 
+    <div class="promo-card">
+      <div class="promo-content">
+        <h4>Soutenons le local</h4>
+        <p>Achetez burundais, faites vivre nos entrepreneurs !</p>
+      </div>
+      <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_150,q_auto,f_auto/v1792677566/aenou7su1pmnwldmkzpd.png" alt="Mascotte" class="mascotte">
+    </div>
+  </aside>
 </main>
 
-<footer class="footer" style="margin-top: 60px; padding: 20px; text-align: center;">
-  <p style="font-size: 12px; color: var(--text-mute);">&copy; 2025 SurprendMoi. Tous droits reserves.</p>
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_120,q_auto,f_auto/v1792677426/mfd0dxaprxrc6u5pjmo9.png" alt="Surprend Moi" class="logo-footer">
+    </div>
+    <div class="footer-links">
+      <a href="dashboard-client.html">Accueil</a>
+      <a href="a-propos.html">A propos</a>
+      <a href="#">Contact</a>
+      <a href="confidentialite.html">Politique de confidentialite</a>
+    </div>
+    <div class="footer-social">
+      <a href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+      <a href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></a>
+      <a href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+    </div>
+    <div class="footer-copy">
+      &copy; 2025 SurprendMoi. Tous droits reserves.
+    </div>
+  </div>
 </footer>
+
+<nav class="mobile-nav">
+  <a href="dashboard-client.html" class="active">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    Accueil
+  </a>
+  <a href="dashboard-client.html#produits">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+    Categories
+  </a>
+  <a href="vendeurs.html">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+    Vendeurs
+  </a>
+  <a href="mon-compte.html">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+    Mon Compte
+  </a>
+</nav>
 
 <script src="js/config.js"></script>
 <script src="js/track.js"></script>
@@ -66,21 +198,56 @@
 <script>
   var session = SM_AUTH.exigerConnexion('client');
   if (session) {
-    document.getElementById('nomClient').textContent = session.nom || session.email;
+    // --- GESTION DU PROFIL CLIENT ---
+    var avatarDiv = document.getElementById('avatarClient');
+    var nomClientSpan = document.getElementById('nomClient');
     
+    var nomAffiche = session.nom || session.email;
+    if (nomClientSpan) nomClientSpan.textContent = nomAffiche;
+
+    if (session.photo && session.photo.trim() !== '') {
+      avatarDiv.innerHTML = '<img src="' + session.photo + '" style="width: 100%; height: 100%; object-fit: cover;">';
+    } else {
+      var initiale = nomAffiche.charAt(0).toUpperCase();
+      avatarDiv.textContent = initiale;
+    }
+
+    // --- DECONNEXION ---
     document.getElementById('btnLogout').addEventListener('click', function () {
       SM_AUTH.clearSession();
       location.href = 'index.html';
     });
 
+    // --- PARTAGE ---
+    document.getElementById('btnShare').addEventListener('click', function() {
+      var shareData = {
+        title: 'Surprend Moi - Le marché en un clic',
+        text: 'Découvre les meilleurs vendeurs WhatsApp du Burundi sur Surprend Moi !',
+        url: window.location.origin + '/surprend-moi/index.html'
+      };
+      
+      if (navigator.share) {
+        navigator.share(shareData).catch(function() {});
+      } else {
+        // Fallback pour les navigateurs qui ne supportent pas le partage natif
+        var tempInput = document.createElement('input');
+        tempInput.value = shareData.url;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        alert('Lien copié dans le presse-papiers ! Vous pouvez le coller sur WhatsApp.');
+      }
+    });
+
+    // --- CHARGEMENT DES PRODUITS ---
     var tousLesProduits = [];
     var grid = document.getElementById('produitsClient');
     var vide = document.getElementById('vide');
     var count = document.getElementById('resultatCount');
-    var inputMot = document.getElementById('rechercheMot');
-    var selectCat = document.getElementById('rechercheCat');
-    var inputMin = document.getElementById('prixMin');
-    var inputMax = document.getElementById('prixMax');
+    var inputPC = document.getElementById('searchHeaderPC');
+    var inputMobile = document.getElementById('searchHeaderMobile');
+    var categorieActive = 'Tout';
 
     SM_PRODUITS.tousProduits().then(function (liste) {
       tousLesProduits = liste;
@@ -90,7 +257,6 @@
       grid.innerHTML = '';
       vide.classList.remove('hidden');
       vide.querySelector('h3').textContent = 'Erreur de chargement';
-      vide.querySelector('p').textContent = 'Verifie ta connexion internet.';
     });
 
     function remplirCategories(liste) {
@@ -99,19 +265,47 @@
         if (liste[i].categorie) cats[liste[i].categorie] = true;
       }
       var noms = Object.keys(cats).sort();
+      var container = document.getElementById('categoriesList');
+      
       for (var j = 0; j < noms.length; j++) {
-        var opt = document.createElement('option');
-        opt.value = noms[j];
-        opt.textContent = noms[j];
-        selectCat.appendChild(opt);
+        var btn = document.createElement('button');
+        btn.className = 'cat-btn';
+        btn.setAttribute('data-cat', noms[j]);
+        btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg><span>' + noms[j] + '</span>';
+        
+        btn.addEventListener('click', function() {
+          categorieActive = this.getAttribute('data-cat');
+          majCatActive();
+          rafraichir();
+        });
+        container.appendChild(btn);
+      }
+      
+      container.querySelector('[data-cat="Tout"]').addEventListener('click', function() {
+        categorieActive = 'Tout';
+        majCatActive();
+        rafraichir();
+      });
+    }
+
+    function majCatActive() {
+      var btns = document.querySelectorAll('.cat-btn');
+      for (var i = 0; i < btns.length; i++) {
+        if (btns[i].getAttribute('data-cat') === categorieActive) {
+          btns[i].classList.add('active');
+        } else {
+          btns[i].classList.remove('active');
+        }
       }
     }
 
     function filtrer() {
-      var mot = inputMot.value.trim().toLowerCase();
-      var cat = selectCat.value;
-      var min = parseFloat(inputMin.value) || 0;
-      var max = parseFloat(inputMax.value) || Infinity;
+      var mot = '';
+      if (inputPC && inputPC.offsetParent !== null) {
+        mot = inputPC.value.trim().toLowerCase();
+      } else if (inputMobile) {
+        mot = inputMobile.value.trim().toLowerCase();
+      }
 
       return tousLesProduits.filter(function (p) {
         if (mot) {
@@ -120,10 +314,7 @@
           var boutique = (p.boutique || '').toLowerCase();
           if (nom.indexOf(mot) === -1 && desc.indexOf(mot) === -1 && boutique.indexOf(mot) === -1) return false;
         }
-        if (cat && p.categorie !== cat) return false;
-        var prix = Number(p.prix) || 0;
-        if (prix < min) return false;
-        if (prix > max) return false;
+        if (categorieActive !== 'Tout' && p.categorie !== categorieActive) return false;
         return true;
       });
     }
@@ -137,7 +328,9 @@
       }
       vide.classList.add('hidden');
       count.textContent = liste.length + ' produit' + (liste.length > 1 ? 's' : '') + ' trouve' + (liste.length > 1 ? 's' : '');
-      for (var i = 0; i < liste.length; i++) {
+      
+      var max = Math.min(liste.length, 8);
+      for (var i = 0; i < max; i++) {
         grid.appendChild(SM_APP.creerCarteProduit(liste[i]));
       }
     }
@@ -146,18 +339,8 @@
       afficher(filtrer());
     }
 
-    inputMot.addEventListener('input', rafraichir);
-    selectCat.addEventListener('change', rafraichir);
-    inputMin.addEventListener('input', rafraichir);
-    inputMax.addEventListener('input', rafraichir);
-
-    document.getElementById('btnReset').addEventListener('click', function () {
-      inputMot.value = '';
-      selectCat.value = '';
-      inputMin.value = '';
-      inputMax.value = '';
-      afficher(tousLesProduits);
-    });
+    if (inputPC) inputPC.addEventListener('input', rafraichir);
+    if (inputMobile) inputMobile.addEventListener('input', rafraichir);
   }
 </script>
 </body>
