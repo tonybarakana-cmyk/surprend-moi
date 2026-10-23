@@ -241,7 +241,6 @@
 
     function filtrer() {
       var mot = '';
-      // On vérifie quel champ est visible
       if (inputMobile && window.getComputedStyle(inputMobile).display !== 'none') {
         mot = inputMobile.value.trim().toLowerCase();
       } else if (inputPC) {
