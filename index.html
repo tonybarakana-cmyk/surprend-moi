@@ -24,12 +24,7 @@
     </nav>
 
     <div class="header-actions">
-      <div class="search-box">
-        <input type="text" id="searchHeaderPC" placeholder="Rechercher...">
-        <button class="search-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        </button>
-      </div>
+      <!-- LA BARRE DE RECHERCHE PC A ETE RETIREE D'ICI -->
       <a href="connexion.html" class="btn btn-ghost">Connexion</a>
       <a href="inscription.html" class="btn btn-primary">S'inscrire</a>
     </div>
@@ -72,6 +67,17 @@
 <main class="main-layout" id="produits">
   
   <div class="products-column">
+    
+    <!-- NOUVELLE BARRE DE RECHERCHE POUR ORDINATEUR -->
+    <div class="desktop-search-wrapper">
+      <div class="desktop-search-box">
+        <input type="text" id="searchHeaderPC" placeholder="Rechercher un produit, une categorie...">
+        <button class="search-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+      </div>
+    </div>
+
     <div class="section-header">
       <h2 class="section-title">Produits recents</h2>
       <a href="index.html#produits" class="link-all">Voir tous →</a>
@@ -241,10 +247,11 @@
 
     function filtrer() {
       var mot = '';
-      if (inputMobile && window.getComputedStyle(inputMobile).display !== 'none') {
-        mot = inputMobile.value.trim().toLowerCase();
-      } else if (inputPC) {
+      // Si la barre PC est visible (donc on est sur ordinateur)
+      if (inputPC && inputPC.offsetParent !== null) {
         mot = inputPC.value.trim().toLowerCase();
+      } else if (inputMobile) {
+        mot = inputMobile.value.trim().toLowerCase();
       }
 
       return tousLesProduits.filter(function (p) {
