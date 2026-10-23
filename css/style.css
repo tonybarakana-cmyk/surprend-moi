@@ -182,3 +182,42 @@ tbody tr:last-child td { border-bottom: none; }
 
 @media (max-width: 1200px) { .produits-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 992px) { .main-layout { grid-template-columns: 1fr; } .sidebar { display: none; } }
+
+/* ==================== BOUTON VOIR (SUR LES CARTES) ==================== */
+.produit-voir {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(22, 199, 101, 0.1);
+  color: var(--accent-2);
+  border: 1px solid var(--accent-1);
+  font-size: 13px;
+  font-weight: 800;
+  padding: 8px;
+  border-radius: 8px;
+  margin-top: auto;
+  transition: all 0.2s ease;
+}
+.produit-voir:hover {
+  background: var(--accent-1);
+  color: #000;
+}
+
+/* ==================== BOUTON DISCUTER (PAGE PRODUIT) ==================== */
+.btn-wa {
+  background: var(--accent-2);
+  color: #000;
+  padding: 16px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  width: 100%;
+}
+.btn-wa:hover {
+  background: #4ade80;
+}
