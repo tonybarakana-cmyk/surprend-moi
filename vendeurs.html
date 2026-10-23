@@ -14,15 +14,24 @@
     <a href="index.html" class="brand">
       <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_150,q_auto,f_auto/v1792677426/mfd0dxaprxrc6u5pjmo9.png" alt="Surprend Moi" class="logo">
     </a>
-    <nav class="nav-main">
+    
+    <!-- On garde le menu, mais on le cache si connecté -->
+    <nav class="nav-main" id="navMain">
       <a href="index.html" class="nav-link">Accueil</a>
       <a href="index.html#produits" class="nav-link">Categories</a>
       <a href="vendeurs.html" class="nav-link active">Vendeurs</a>
       <a href="mon-compte.html" class="nav-link">Mon Compte</a>
     </nav>
-    <div class="header-actions">
-      <a href="connexion.html" class="btn btn-ghost">Connexion</a>
-      <a href="inscription.html" class="btn btn-primary">S'inscrire</a>
+
+    <div class="header-actions" id="headerActions">
+      <a href="connexion.html" class="btn btn-ghost" id="btnConnexion">Connexion</a>
+      <a href="inscription.html" class="btn btn-primary" id="btnInscription">S'inscrire</a>
+      
+      <!-- Profil (Caché par défaut) -->
+      <a href="mon-compte.html" id="profilLink" style="display: none; align-items: center; gap: 12px; text-decoration: none; cursor: pointer;">
+        <div id="avatarHeader" style="width: 44px; height: 44px; background: var(--accent-1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; color: #000; overflow: hidden; border: 2px solid var(--accent-2);"></div>
+        <span id="nomHeader" style="font-size: 14px; color: #fff; font-weight: 800;">Client</span>
+      </a>
     </div>
   </div>
 </header>
@@ -49,7 +58,8 @@
   </div>
 </footer>
 
-<nav class="mobile-nav">
+<!-- Menu Mobile -->
+<nav class="mobile-nav" id="mobileNav">
   <a href="index.html">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
     Accueil
@@ -74,8 +84,51 @@
 <script src="js/produits.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    var session = SM_AUTH.getSession();
+    var navMain = document.getElementById('navMain');
+    var mobileNav = document.getElementById('mobileNav');
+    var btnConnexion = document.getElementById('btnConnexion');
+    var btnInscription = document.getElementById('btnInscription');
+    var profilLink = document.getElementById('profilLink');
+    var avatarHeader = document.getElementById('avatarHeader');
+    var nomHeader = document.getElementById('nomHeader');
+
+    if (session) {
+      // --- L'UTILISATEUR EST CONNECTÉ ---
+      // On cache les liens "Connexion" et "S'inscrire"
+      if (btnConnexion) btnConnexion.style.display = 'none';
+      if (btnInscription) btnInscription.style.display = 'none';
+
+      // On affiche son profil
+      if (profilLink) {
+        profilLink.style.display = 'flex';
+        var nomAffiche = session.nom || session.boutique || session.email;
+        nomHeader.textContent = nomAffiche;
+
+        if (session.photo && session.photo.trim() !== '') {
+          avatarHeader.innerHTML = '<img src="' + session.photo + '" style="width: 100%; height: 100%; object-fit: cover;">';
+        } else {
+          avatarHeader.textContent = nomAffiche.charAt(0).toUpperCase();
+        }
+      }
+
+      // On adapte le menu pour que le client reste dans son espace
+      if (navMain) {
+        var accueilLink = navMain.querySelector('a[href="index.html"]');
+        if (accueilLink) accueilLink.href = 'dashboard-client.html';
+        var catLink = navMain.querySelector('a[href="index.html#produits"]');
+        if (catLink) catLink.href = 'dashboard-client.html#produits';
+      }
+      if (mobileNav) {
+        var mobileAccueil = mobileNav.querySelector('a[href="index.html"]');
+        if (mobileAccueil) mobileAccueil.href = 'dashboard-client.html';
+        var mobileCat = mobileNav.querySelector('a[href="index.html#produits"]');
+        if (mobileCat) mobileCat.href = 'dashboard-client.html#produits';
+      }
+    }
+
+    // --- CHARGEMENT DES VENDEURS ---
     var container = document.getElementById('listeVendeurs');
-    
     SM_PRODUITS.tousVendeurs().then(function(vendeurs) {
       container.innerHTML = '';
 
