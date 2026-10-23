@@ -157,7 +157,6 @@
 
       app.innerHTML = html;
 
-      // Gestion de la photo
       var photoData = '';
       document.getElementById('photoInput').addEventListener('change', function (e) {
         var file = e.target.files[0];
@@ -175,7 +174,6 @@
         });
       });
 
-      // Gestion du formulaire
       document.getElementById('formProfil').addEventListener('submit', function (e) {
         e.preventDefault();
         var btn = document.getElementById('btnSave');
