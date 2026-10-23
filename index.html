@@ -24,7 +24,7 @@
     </nav>
 
     <div class="header-actions">
-      <!-- LA BARRE DE RECHERCHE PC A ETE RETIREE D'ICI -->
+      <!-- LA BARRE DE RECHERCHE A ETE RETIREE DU HEADER -->
       <a href="connexion.html" class="btn btn-ghost">Connexion</a>
       <a href="inscription.html" class="btn btn-primary">S'inscrire</a>
     </div>
@@ -68,7 +68,7 @@
   
   <div class="products-column">
     
-    <!-- NOUVELLE BARRE DE RECHERCHE POUR ORDINATEUR -->
+    <!-- NOUVELLE BARRE DE RECHERCHE POUR ORDINATEUR (PLACEE ICI) -->
     <div class="desktop-search-wrapper">
       <div class="desktop-search-box">
         <input type="text" id="searchHeaderPC" placeholder="Rechercher un produit, une categorie...">
@@ -247,7 +247,6 @@
 
     function filtrer() {
       var mot = '';
-      // Si la barre PC est visible (donc on est sur ordinateur)
       if (inputPC && inputPC.offsetParent !== null) {
         mot = inputPC.value.trim().toLowerCase();
       } else if (inputMobile) {
