@@ -6,31 +6,84 @@
 <meta name="theme-color" content="#07110B">
 <title>Boutique - Surprend Moi</title>
 <link rel="stylesheet" href="css/style.css">
+<style>
+  /* Styles pour la barre de recherche avancée de la boutique */
+  .shop-toolbar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+  .shop-search {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .shop-search input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #fff;
+    outline: none;
+    font-size: 14px;
+  }
+  .shop-search svg { color: var(--text-mute); margin-right: 8px; }
+  .shop-filter {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .shop-filter option { background: var(--surface); }
+</style>
 </head>
 <body>
 
+<!-- HEADER (Juste le logo, sans les liens de navigation) -->
 <header class="header">
-  <div class="header-container">
-    <a href="index.html" class="brand" id="logoLink">
+  <div class="header-container" style="justify-content: center;">
+    <a href="index.html" class="brand">
       <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_150,q_auto,f_auto/v1792677426/mfd0dxaprxrc6u5pjmo9.png" alt="Surprend Moi" class="logo">
     </a>
-    <nav class="nav-main" id="navMain">
-      <a href="index.html" class="nav-link" id="navAccueil">Accueil</a>
-      <a href="index.html#produits" class="nav-link" id="navCategories">Categories</a>
-      <a href="vendeurs.html" class="nav-link" id="navVendeurs">Vendeurs</a>
-      <a href="mon-compte.html" class="nav-link" id="navCompte">Mon Compte</a>
-    </nav>
-    <div class="header-actions">
-      <a href="connexion.html" class="btn btn-ghost" id="btnNavConnexion">Connexion</a>
-      <a href="inscription.html" class="btn btn-primary" id="btnNavInscription">S'inscrire</a>
-    </div>
   </div>
 </header>
 
 <main class="main-layout" style="grid-template-columns: 1fr; max-width: 1200px; margin-top: 100px;">
   
-  <div id="shopHeader" style="display: flex; align-items: center; gap: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 30px;">
+  <!-- EN-TETE DE LA BOUTIQUE -->
+  <div id="shopHeader" style="display: flex; align-items: center; gap: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 24px;">
     <div class="loader"></div>
+  </div>
+
+  <!-- BARRE DE RECHERCHE AVANCEE -->
+  <div class="shop-toolbar">
+    <div class="shop-search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="shopSearchInput" placeholder="Rechercher dans cette boutique...">
+    </div>
+    <select id="shopSort" class="shop-filter">
+      <option value="recent">Plus recents</option>
+      <option value="prix_asc">Prix croissant</option>
+      <option value="prix_desc">Prix decroissant</option>
+      <option value="nom">Nom (A-Z)</option>
+    </select>
+    <select id="shopCat" class="shop-filter">
+      <option value="Tout">Toutes categories</option>
+    </select>
   </div>
 
   <div class="section-header">
@@ -41,37 +94,22 @@
     <div class="loader"></div>
   </div>
 
+  <div class="empty-state hidden" id="shopVide">
+    <h3>Aucun produit trouve</h3>
+  </div>
+
 </main>
 
 <footer class="footer">
   <div class="footer-container">
     <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_120,q_auto,f_auto/v1792677426/mfd0dxaprxrc6u5pjmo9.png" alt="Surprend Moi" class="logo-footer">
     <div class="footer-links">
-      <a href="index.html" id="footerAccueil">Accueil</a>
+      <a href="index.html">Accueil</a>
       <a href="a-propos.html">A propos</a>
       <a href="confidentialite.html">Politique de confidentialite</a>
     </div>
   </div>
 </footer>
-
-<nav class="mobile-nav" id="mobileNav">
-  <a href="index.html" id="mobileAccueil">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-    Accueil
-  </a>
-  <a href="index.html#produits" id="mobileCategories">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-    Categories
-  </a>
-  <a href="vendeurs.html" id="mobileVendeurs">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-    Vendeurs
-  </a>
-  <a href="mon-compte.html" id="mobileCompte">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-    Mon Compte
-  </a>
-</nav>
 
 <script src="js/config.js"></script>
 <script src="js/track.js"></script>
@@ -80,35 +118,14 @@
 <script src="js/app.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // --- 1. CORRECTION DES LIENS DU MENU SELON LA SESSION ---
-    var session = SM_AUTH.getSession();
-    if (session) {
-      var dashboardUrl = session.role === 'vendeur' ? 'dashboard-vendeur.html' : 'dashboard-client.html';
-
-      // Changer les liens du header
-      document.getElementById('logoLink').href = dashboardUrl;
-      document.getElementById('navAccueil').href = dashboardUrl;
-      document.getElementById('navCategories').href = dashboardUrl + '#produits';
-      
-      // Changer les liens du footer
-      document.getElementById('footerAccueil').href = dashboardUrl;
-
-      // Changer les liens du menu mobile
-      document.getElementById('mobileAccueil').href = dashboardUrl;
-      document.getElementById('mobileCategories').href = dashboardUrl + '#produits';
-
-      // Masquer les boutons Connexion / S'inscrire
-      var btnNavConnexion = document.getElementById('btnNavConnexion');
-      var btnNavInscription = document.getElementById('btnNavInscription');
-      if (btnNavConnexion) btnNavConnexion.style.display = 'none';
-      if (btnNavInscription) btnNavInscription.style.display = 'none';
-    }
-
-    // --- 2. CHARGEMENT DE LA BOUTIQUE ---
     var params = new URLSearchParams(location.search);
     var shopName = params.get('shop');
     var headerContainer = document.getElementById('shopHeader');
     var grid = document.getElementById('shopProduits');
+    var shopVide = document.getElementById('shopVide');
+    var searchInput = document.getElementById('shopSearchInput');
+    var sortSelect = document.getElementById('shopSort');
+    var catSelect = document.getElementById('shopCat');
 
     if (shopName) {
       shopName = decodeURIComponent(shopName).trim();
@@ -120,19 +137,23 @@
       return;
     }
 
+    var tousLesProduits = [];
+    var vendeurActuel = null;
+
     SM_PRODUITS.tousVendeurs().then(function(vendeurs) {
-      var vendeur = vendeurs.find(function(v) { 
+      vendeurActuel = vendeurs.find(function(v) { 
         return v.boutique.trim().toLowerCase() === shopName.toLowerCase(); 
       });
 
-      if (!vendeur) {
+      if (!vendeurActuel) {
         headerContainer.innerHTML = '<h2 style="color:#fff; text-align:center; width:100%;">Boutique introuvable</h2>';
         return;
       }
 
-      var initiale = vendeur.boutique.charAt(0).toUpperCase();
-      var photoHtml = vendeur.photo 
-        ? `<img src="${vendeur.photo}" style="width: 100%; height: 100%; object-fit: cover;">` 
+      // Affichage du profil vendeur
+      var initiale = vendeurActuel.boutique.charAt(0).toUpperCase();
+      var photoHtml = vendeurActuel.photo 
+        ? `<img src="${vendeurActuel.photo}" style="width: 100%; height: 100%; object-fit: cover;">` 
         : initiale;
 
       headerContainer.innerHTML = `
@@ -140,31 +161,71 @@
           ${photoHtml}
         </div>
         <div>
-          <h1 style="font-size: 24px; font-weight: 900; color: #fff; margin-bottom: 4px;">${vendeur.boutique}</h1>
-          <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 4px;">${vendeur.zone}</p>
-          ${vendeur.specialite ? `<span style="font-size: 12px; background: rgba(22,199,101,0.1); color: var(--accent-2); padding: 4px 10px; border-radius: 6px; font-weight: 700;">Spécialité : ${vendeur.specialite}</span>` : ''}
+          <h1 style="font-size: 24px; font-weight: 900; color: #fff; margin-bottom: 4px;">${vendeurActuel.boutique}</h1>
+          <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 4px;">${vendeurActuel.zone}</p>
+          ${vendeurActuel.specialite ? `<span style="font-size: 12px; background: rgba(22,199,101,0.1); color: var(--accent-2); padding: 4px 10px; border-radius: 6px; font-weight: 700;">Spécialité : ${vendeurActuel.specialite}</span>` : ''}
         </div>
       `;
 
+      // Chargement des produits
       SM_PRODUITS.tousProduits().then(function(produits) {
-        var mesProduits = produits.filter(function(p) {
-          return (p.boutique || '').trim().toLowerCase() === vendeur.boutique.trim().toLowerCase();
+        tousLesProduits = produits.filter(function(p) {
+          return (p.boutique || '').trim().toLowerCase() === vendeurActuel.boutique.trim().toLowerCase();
         });
-
-        grid.innerHTML = '';
-        if (!mesProduits.length) {
-          grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h3>Aucun produit disponible pour le moment</h3></div>';
-          return;
-        }
-
-        for (var i = 0; i < mesProduits.length; i++) {
-          grid.appendChild(SM_APP.creerCarteProduit(mesProduits[i]));
-        }
+        
+        remplirCategories(tousLesProduits);
+        afficher();
       });
 
     }).catch(function() {
       headerContainer.innerHTML = '<h2 style="color:#fff; text-align:center; width:100%;">Erreur de chargement</h2>';
     });
+
+    function remplirCategories(liste) {
+      var cats = {};
+      for (var i = 0; i < liste.length; i++) {
+        if (liste[i].categorie) cats[liste[i].categorie] = true;
+      }
+      var noms = Object.keys(cats).sort();
+      catSelect.innerHTML = '<option value="Tout">Toutes categories</option>';
+      for (var j = 0; j < noms.length; j++) {
+        var opt = document.createElement('option');
+        opt.value = noms[j];
+        opt.textContent = noms[j];
+        catSelect.appendChild(opt);
+      }
+    }
+
+    function afficher() {
+      var mot = searchInput.value.trim().toLowerCase();
+      var sort = sortSelect.value;
+      var cat = catSelect.value;
+
+      var filtres = tousLesProduits.filter(function(p) {
+        if (mot && (p.nom || '').toLowerCase().indexOf(mot) === -1) return false;
+        if (cat !== 'Tout' && p.categorie !== cat) return false;
+        return true;
+      });
+
+      if (sort === 'prix_asc') filtres.sort(function(a,b) { return a.prix - b.prix; });
+      else if (sort === 'prix_desc') filtres.sort(function(a,b) { return b.prix - a.prix; });
+      else if (sort === 'nom') filtres.sort(function(a,b) { return a.nom.localeCompare(b.nom); });
+
+      grid.innerHTML = '';
+      if (!filtres.length) {
+        shopVide.classList.remove('hidden');
+        return;
+      }
+      shopVide.classList.add('hidden');
+      
+      for (var i = 0; i < filtres.length; i++) {
+        grid.appendChild(SM_APP.creerCarteProduit(filtres[i]));
+      }
+    }
+
+    searchInput.addEventListener('input', afficher);
+    sortSelect.addEventListener('change', afficher);
+    catSelect.addEventListener('change', afficher);
   });
 </script>
 </body>
