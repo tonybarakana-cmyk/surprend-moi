@@ -202,7 +202,6 @@
       location.href = 'index.html';
     });
 
-    // --- PARTAGE AVEC LE BON LIEN ---
     document.getElementById('btnShare').addEventListener('click', function() {
       var shareData = {
         title: 'Surprend Moi - Le marché en un clic',
@@ -218,7 +217,7 @@
         tempInput.select();
         document.execCommand('copy');
         document.body.removeChild(tempInput);
-        alert('Lien copié dans le presse-papiers : ' + shareData.url);
+        alert('Lien copié : ' + shareData.url);
       }
     });
 

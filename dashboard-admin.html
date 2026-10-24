@@ -3,44 +3,91 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0b0b10">
+<meta name="theme-color" content="#07110B">
 <meta name="robots" content="noindex, nofollow">
 <title>Admin - Surprend Moi</title>
 <link rel="stylesheet" href="css/style.css">
+<style>
+  .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+  .admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 40px; }
+  .admin-stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+  .admin-stat-num { font-size: 36px; font-weight: 900; color: var(--accent-2); margin-bottom: 8px; }
+  .admin-stat-label { font-size: 12px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+  
+  .admin-section { margin-bottom: 40px; }
+  .admin-section-title { font-size: 20px; font-weight: 800; margin-bottom: 16px; color: #fff; display: flex; align-items: center; gap: 8px; }
+  
+  .admin-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+  .admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .admin-table th, .admin-table td { padding: 16px; text-align: left; border-bottom: 1px solid var(--border); }
+  .admin-table th { background: var(--bg); color: var(--text-soft); font-size: 12px; text-transform: uppercase; font-weight: 700; }
+  .admin-table tr:last-child td { border-bottom: none; }
+  .admin-table td { color: #fff; }
+</style>
 </head>
 <body>
 
 <header class="header">
-  <a href="index.html" class="brand">Surprend Moi - Admin</a>
-  <div class="header-actions">
-    <button id="btnLogout" class="btn btn-ghost btn-small">Deconnexion</button>
+  <div class="header-container">
+    <a href="index.html" class="brand">
+      <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_150,q_auto,f_auto/v1792677426/mfd0dxaprxrc6u5pjmo9.png" alt="Surprend Moi" class="logo">
+    </a>
+    <button id="btnLogout" class="btn btn-ghost" style="color: #f87171; border-color: rgba(239, 68, 68, 0.3);">Deconnexion</button>
   </div>
 </header>
 
-<main class="container">
+<main class="container" style="max-width: 1200px; margin-top: 100px;">
+  
+  <div class="admin-header">
+    <h1 class="section-title" style="margin: 0;">Tableau de bord</h1>
+  </div>
 
-  <h1 class="section-title" style="margin-top:16px;">Tableau de bord</h1>
+  <div id="stats" class="admin-stats"></div>
 
-  <div id="stats" class="stats-grid"></div>
+  <div class="admin-section">
+    <h2 class="admin-section-title">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      Vendeurs
+    </h2>
+    <div class="admin-table-wrap">
+      <table class="admin-table" id="tableVendeurs">
+        <thead><tr><th>Date</th><th>Boutique</th><th>Email</th><th>Telephone</th><th>Categorie</th><th>Zone</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 
-  <h2 class="section-title">Vendeurs</h2>
-  <div class="table-wrap"><table id="tableVendeurs"><thead><tr><th>Date</th><th>Boutique</th><th>Email</th><th>Telephone</th><th>Categorie</th><th>Zone</th></tr></thead><tbody></tbody></table></div>
+  <div class="admin-section">
+    <h2 class="admin-section-title">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      Produits
+    </h2>
+    <div class="admin-table-wrap">
+      <table class="admin-table" id="tableProduits">
+        <thead><tr><th>Date</th><th>Produit</th><th>Prix</th><th>Boutique</th><th>Categorie</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 
-  <h2 class="section-title">Produits</h2>
-  <div class="table-wrap"><table id="tableProduits"><thead><tr><th>Date</th><th>Produit</th><th>Prix</th><th>Boutique</th><th>Categorie</th></tr></thead><tbody></tbody></table></div>
-
-  <h2 class="section-title">Visites</h2>
-  <div class="table-wrap"><table id="tableVisites"><thead><tr><th>Date</th><th>Page</th><th>Pseudo</th></tr></thead><tbody></tbody></table></div>
-
-  <h2 class="section-title">Negociations</h2>
-  <div class="table-wrap"><table id="tableNegos"><thead><tr><th>Date</th><th>Produit</th><th>Vendeur</th></tr></thead><tbody></tbody></table></div>
-
-  <h2 class="section-title">Tentatives vendeur refusees</h2>
-  <div class="table-wrap"><table id="tableTentatives"><thead><tr><th>Date</th><th>Nom</th><th>WhatsApp</th><th>Message</th></tr></thead><tbody></tbody></table></div>
+  <div class="admin-section">
+    <h2 class="admin-section-title">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+      Negociations
+    </h2>
+    <div class="admin-table-wrap">
+      <table class="admin-table" id="tableNegos">
+        <thead><tr><th>Date</th><th>Produit</th><th>Vendeur</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 
 </main>
 
-<footer class="footer">Surprend Moi - Administration</footer>
+<footer class="footer" style="margin-top: 60px; padding: 20px; text-align: center;">
+  <p style="font-size: 12px; color: var(--text-mute);">&copy; 2025 SurprendMoi. Administration.</p>
+</footer>
 
 <script src="js/config.js"></script>
 <script src="js/track.js"></script>
@@ -56,17 +103,15 @@
     SM_AUTH.apiGet({ action: 'admin_stats', email: session.email }).then(function (data) {
       var s = document.getElementById('stats');
       s.innerHTML =
-        '<div class="stat-card"><div class="stat-num">' + (data.visites || 0) + '</div><div class="stat-label">Visites</div></div>' +
-        '<div class="stat-card"><div class="stat-num">' + (data.vendeurs || 0) + '</div><div class="stat-label">Vendeurs</div></div>' +
-        '<div class="stat-card"><div class="stat-num">' + (data.clients || 0) + '</div><div class="stat-label">Clients</div></div>' +
-        '<div class="stat-card"><div class="stat-num">' + (data.produits || 0) + '</div><div class="stat-label">Produits</div></div>' +
-        '<div class="stat-card"><div class="stat-num">' + (data.negociations || 0) + '</div><div class="stat-label">Negociations</div></div>';
+        '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.visites || 0) + '</div><div class="admin-stat-label">Visites</div></div>' +
+        '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.vendeurs || 0) + '</div><div class="admin-stat-label">Vendeurs</div></div>' +
+        '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.clients || 0) + '</div><div class="admin-stat-label">Clients</div></div>' +
+        '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.produits || 0) + '</div><div class="admin-stat-label">Produits</div></div>' +
+        '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.negociations || 0) + '</div><div class="admin-stat-label">Negociations</div></div>';
 
       remplir('tableVendeurs', data.listeVendeurs || [], ['date', 'boutique', 'email', 'telephone', 'categorie', 'zone']);
       remplir('tableProduits', data.listeProduits || [], ['date', 'nom', 'prix', 'boutique', 'categorie']);
-      remplir('tableVisites', data.listeVisites || [], ['date', 'page', 'pseudo']);
       remplir('tableNegos', data.listeNegos || [], ['date', 'produit', 'vendeur']);
-      remplir('tableTentatives', data.listeTentatives || [], ['date', 'nom', 'whatsapp', 'message']);
     });
 
     function remplir(tableId, liste, colonnes) {
