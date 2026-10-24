@@ -69,22 +69,28 @@
     }
     .logo { height: 32px !important; }
     
-    /* Cacher le bouton Partager sur mobile */
-    #btnShareVendeur { display: none !important; }
-    
-    /* Cacher le texte du profil, garder juste le cercle */
-    .profile-text { display: none !important; }
-    
-    .header-actions {
-      gap: 8px !important;
+    /* Cacher le texte du bouton Partager, garder l'icône */
+    #btnShareVendeur span { display: none !important; }
+    #btnShareVendeur {
+      padding: 8px !important;
+      border-radius: 50% !important;
+      width: 36px !important;
+      height: 36px !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
     }
     
-    .header-actions .btn-ghost {
+    /* Cacher le texte du profil, garder le cercle */
+    .profile-text { display: none !important; }
+    
+    /* Ajuster la déconnexion */
+    #btnLogout {
       padding: 6px 10px !important;
       font-size: 11px !important;
     }
 
-    /* Ajuster la toolbar pour qu'elle ne deborde pas */
+    /* Ajuster la toolbar */
     .vendor-toolbar {
       padding: 12px;
       gap: 8px;
@@ -110,13 +116,13 @@
     </a>
     
     <div class="header-actions" style="display: flex; align-items: center; gap: 12px;">
-      <!-- BOUTON PARTAGER (Caché sur mobile via CSS) -->
+      <!-- BOUTON PARTAGER (Icône seule sur mobile) -->
       <button id="btnShareVendeur" class="btn btn-ghost" style="padding: 8px 16px; font-size: 13px; display: flex; align-items: center; gap: 6px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-        Partager
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        <span>Partager</span>
       </button>
 
-      <!-- PROFIL -->
+      <!-- PROFIL (Cercle seul sur mobile) -->
       <a href="mon-compte.html" class="profile-compact">
         <div id="avatarVendeur" style="width: 40px; height: 40px; background: var(--accent-1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; color: #000; overflow: hidden; border: 2px solid var(--accent-2); flex-shrink: 0;"></div>
         <div class="profile-text">
