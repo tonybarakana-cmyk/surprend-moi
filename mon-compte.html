@@ -78,25 +78,10 @@
     var btnNavInscription = document.getElementById('btnNavInscription');
     var btnLogoutTop = document.getElementById('btnLogoutTop');
 
-    // Si l'utilisateur est connecté, on change les liens du menu
-    if (session) {
-      var dashboardUrl = session.role === 'vendeur' ? 'dashboard-vendeur.html' : 'dashboard-client.html';
-
-      // Changer les liens du header
-      document.getElementById('logoLink').href = dashboardUrl;
-      document.getElementById('navAccueil').href = dashboardUrl;
-      document.getElementById('navCategories').href = dashboardUrl + '#produits';
-      
-      // Changer les liens du footer
-      document.getElementById('footerAccueil').href = dashboardUrl;
-
-      // Changer les liens du menu mobile
-      document.getElementById('mobileAccueil').href = dashboardUrl;
-      document.getElementById('mobileCategories').href = dashboardUrl + '#produits';
-    }
-
     if (!session) {
-      // --- VISITEUR ---
+      // ==========================================
+      // VISITEUR (NON CONNECTÉ)
+      // ==========================================
       app.innerHTML = `
         <div class="card" style="text-align: center;">
           <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2" style="margin: 0 auto 20px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
@@ -107,16 +92,38 @@
         </div>
       `;
     } else {
-      // --- UTILISATEUR CONNECTÉ ---
+      // ==========================================
+      // UTILISATEUR CONNECTÉ
+      // ==========================================
+      
+      // --- CORRECTION DES LIENS DU MENU ---
+      var dashboardUrl = session.role === 'vendeur' ? 'dashboard-vendeur.html' : 'dashboard-client.html';
+      
+      document.getElementById('logoLink').href = dashboardUrl;
+      document.getElementById('navAccueil').href = dashboardUrl;
+      document.getElementById('navCategories').href = dashboardUrl + '#produits';
+      
+      // Le lien Vendeurs pointe vers le dashboard si on est vendeur
+      if (session.role === 'vendeur') {
+        document.getElementById('navVendeurs').href = 'dashboard-vendeur.html';
+        document.getElementById('mobileVendeurs').href = 'dashboard-vendeur.html';
+      }
+      
+      document.getElementById('footerAccueil').href = dashboardUrl;
+      document.getElementById('mobileAccueil').href = dashboardUrl;
+      document.getElementById('mobileCategories').href = dashboardUrl + '#produits';
+
+      // On cache les boutons Connexion / S'inscrire
       if (btnNavConnexion) btnNavConnexion.style.display = 'none';
       if (btnNavInscription) btnNavInscription.style.display = 'none';
+      
+      // On affiche le bouton Déconnexion
       if (btnLogoutTop) btnLogoutTop.style.display = 'inline-flex';
 
       var roleLabel = session.role === 'vendeur' ? 'Vendeur' : (session.role === 'admin' ? 'Administrateur' : 'Client');
       var initiale = (session.nom || session.email || 'U').charAt(0).toUpperCase();
       var photoUrl = session.photo || '';
       var texteRetour = session.role === 'vendeur' ? 'Retour à ma boutique' : 'Retour à mon espace client';
-      var retourUrl = session.role === 'vendeur' ? 'dashboard-vendeur.html' : 'dashboard-client.html';
 
       var html = `
         <div class="card">
@@ -166,7 +173,7 @@
             <div id="alerte" class="alert hidden" style="margin-top: 15px;"></div>
           </div>
 
-          <a href="${retourUrl}" class="btn btn-primary" style="width: 100%; margin-bottom: 12px; display: block; text-align: center;">${texteRetour}</a>
+          <a href="${dashboardUrl}" class="btn btn-primary" style="width: 100%; margin-bottom: 12px; display: block; text-align: center;">${texteRetour}</a>
 
           <button id="btnLogout" class="btn btn-ghost" style="width: 100%; color: #f87171; border-color: rgba(239, 68, 68, 0.3); margin-top: 10px;">Se déconnecter</button>
         </div>
