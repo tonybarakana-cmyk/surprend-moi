@@ -7,6 +7,7 @@
 <title>Ma boutique - Surprend Moi</title>
 <link rel="stylesheet" href="css/style.css">
 <style>
+  /* Styles spécifiques pour le dashboard vendeur */
   .vendor-toolbar {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -20,7 +21,7 @@
   }
   .vendor-search {
     flex: 1;
-    min-width: 200px;
+    min-width: 150px;
     display: flex;
     align-items: center;
     background: var(--bg);
@@ -35,8 +36,9 @@
     color: #fff;
     outline: none;
     font-size: 14px;
+    width: 100%;
   }
-  .vendor-search svg { color: var(--text-mute); margin-right: 8px; }
+  .vendor-search svg { color: var(--text-mute); margin-right: 8px; flex-shrink: 0; }
   .vendor-filter {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -49,43 +51,54 @@
   }
   .vendor-filter option { background: var(--surface); }
 
-  /* Styles spécifiques pour les boutons d'action sur la carte */
-  .produit-actions {
+  /* Profil compact */
+  .profile-compact {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 8px;
-  }
-  .btn-action {
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 700;
-    width: 100%;
-    transition: background 0.2s, color 0.2s;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
     cursor: pointer;
-    border: 1px solid;
   }
-  .btn-marquer {
-    background: rgba(34, 197, 94, 0.15);
-    border-color: rgba(34, 197, 94, 0.5);
-    color: #4ade80;
+  .profile-text { display: flex; flex-direction: column; }
+
+  /* Responsive mobile */
+  @media (max-width: 768px) {
+    .header-container {
+      padding: 0 12px !important;
+      gap: 8px !important;
+    }
+    .logo { height: 32px !important; }
+    
+    /* Cacher le bouton Partager sur mobile */
+    #btnShareVendeur { display: none !important; }
+    
+    /* Cacher le texte du profil, garder juste le cercle */
+    .profile-text { display: none !important; }
+    
+    .header-actions {
+      gap: 8px !important;
+    }
+    
+    .header-actions .btn-ghost {
+      padding: 6px 10px !important;
+      font-size: 11px !important;
+    }
+
+    /* Ajuster la toolbar pour qu'elle ne deborde pas */
+    .vendor-toolbar {
+      padding: 12px;
+      gap: 8px;
+    }
+    .vendor-search {
+      min-width: 100%;
+      padding: 8px 12px;
+    }
+    .vendor-filter {
+      flex: 1;
+      padding: 8px 10px;
+      font-size: 13px;
+    }
   }
-  .btn-marquer:hover { background: #22C55E; color: #000; }
-  
-  .btn-restaurer {
-    background: rgba(0, 198, 255, 0.15);
-    border-color: rgba(0, 198, 255, 0.5);
-    color: #00c6ff;
-  }
-  .btn-restaurer:hover { background: #00c6ff; color: #000; }
-  
-  .btn-supprimer {
-    background: rgba(239, 68, 68, 0.15);
-    border-color: rgba(239, 68, 68, 0.5);
-    color: #f87171;
-  }
-  .btn-supprimer:hover { background: #ef4444; color: #fff; }
 </style>
 </head>
 <body>
@@ -96,21 +109,23 @@
       <img src="https://res.cloudinary.com/mtwv68nx/image/upload/w_150,q_auto,f_auto/v1792677426/mfd0dxaprxrc6u5pjmo9.png" alt="Surprend Moi" class="logo">
     </a>
     
-    <div style="display: flex; align-items: center; gap: 16px;">
+    <div class="header-actions" style="display: flex; align-items: center; gap: 12px;">
+      <!-- BOUTON PARTAGER (Caché sur mobile via CSS) -->
       <button id="btnShareVendeur" class="btn btn-ghost" style="padding: 8px 16px; font-size: 13px; display: flex; align-items: center; gap: 6px;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-        Partager ma boutique
+        Partager
       </button>
 
-      <a href="mon-compte.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none; cursor: pointer;">
-        <div id="avatarVendeur" style="width: 44px; height: 44px; background: var(--accent-1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; color: #000; overflow: hidden; border: 2px solid var(--accent-2);"></div>
-        <div>
-          <span id="nomVendeur" style="display: block; font-size: 14px; color: #fff; font-weight: 800;">Boutique</span>
-          <span style="display: block; font-size: 11px; color: var(--accent-2);">Modifier mon profil</span>
+      <!-- PROFIL -->
+      <a href="mon-compte.html" class="profile-compact">
+        <div id="avatarVendeur" style="width: 40px; height: 40px; background: var(--accent-1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; color: #000; overflow: hidden; border: 2px solid var(--accent-2); flex-shrink: 0;"></div>
+        <div class="profile-text">
+          <span id="nomVendeur" style="font-size: 14px; color: #fff; font-weight: 800;">Boutique</span>
+          <span style="font-size: 11px; color: var(--accent-2);">Modifier</span>
         </div>
       </a>
       
-      <button id="btnLogout" class="btn btn-ghost" style="color: #f87171; border-color: rgba(239, 68, 68, 0.3); padding: 8px 16px; font-size: 13px;">Deconnexion</button>
+      <button id="btnLogout" class="btn btn-ghost" style="color: #f87171; border-color: rgba(239, 68, 68, 0.3); padding: 6px 12px; font-size: 12px;">Deconnexion</button>
     </div>
   </div>
 </header>
@@ -125,16 +140,16 @@
   <div class="vendor-toolbar">
     <div class="vendor-search">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      <input type="text" id="vendorSearch" placeholder="Rechercher dans ma boutique...">
+      <input type="text" id="vendorSearch" placeholder="Rechercher...">
     </div>
     <select id="vendorSort" class="vendor-filter">
-      <option value="recent">Plus recents</option>
-      <option value="prix_asc">Prix croissant</option>
-      <option value="prix_desc">Prix decroissant</option>
-      <option value="nom">Nom (A-Z)</option>
+      <option value="recent">Recents</option>
+      <option value="prix_asc">Prix ↑</option>
+      <option value="prix_desc">Prix ↓</option>
+      <option value="nom">Nom A-Z</option>
     </select>
     <select id="vendorCat" class="vendor-filter">
-      <option value="Tout">Toutes categories</option>
+      <option value="Tout">Categories</option>
     </select>
   </div>
 
@@ -181,7 +196,7 @@
       avatarDiv.textContent = nomAffiche.charAt(0).toUpperCase();
     }
 
-    // --- PARTAGE DU PROFIL VENDEUR ---
+    // --- PARTAGE ---
     document.getElementById('btnShareVendeur').addEventListener('click', function() {
       var nomBoutique = session.boutique || session.nom;
       var baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
@@ -235,7 +250,7 @@
         if (liste[i].categorie) cats[liste[i].categorie] = true;
       }
       var noms = Object.keys(cats).sort();
-      selectCat.innerHTML = '<option value="Tout">Toutes categories</option>';
+      selectCat.innerHTML = '<option value="Tout">Categories</option>';
       for (var j = 0; j < noms.length; j++) {
         var opt = document.createElement('option');
         opt.value = noms[j];
