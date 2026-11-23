@@ -17,31 +17,41 @@
     } catch (e) {}
   }
 
-  function getSession() {
+  function lireBrut() {
     try {
       var raw = localStorage.getItem(window.CONFIG.SESSION_KEY);
       if (!raw) return null;
-      var data = JSON.parse(raw);
-      if (!data.expire && data.email) {
-        saveSession(data);
-        return data;
-      }
-      if (!data.expire || !data.user) return null;
-      if (Date.now() > data.expire) {
-        clearSession();
-        return null;
-      }
-      return data.user;
+      return JSON.parse(raw);
     } catch (e) { return null; }
   }
 
+  function getSession() {
+    var data = lireBrut();
+    if (!data) return null;
+    // Ancien format : objet user direct (avec email)
+    if (!data.user && data.email) {
+      saveSession(data, data.jeton || '');
+      return data;
+    }
+    // Format sans expire : on complete
+    if (data.user && !data.expire) {
+      saveSession(data.user, data.jeton || '');
+      return data.user;
+    }
+    if (!data.user || !data.expire) return null;
+    if (Date.now() > data.expire) {
+      clearSession();
+      return null;
+    }
+    return data.user;
+  }
+
   function getJeton() {
-    try {
-      var raw = localStorage.getItem(window.CONFIG.SESSION_KEY);
-      if (!raw) return '';
-      var data = JSON.parse(raw);
-      return data.jeton || '';
-    } catch (e) { return ''; }
+    var data = lireBrut();
+    if (!data) return '';
+    if (data.jeton) return data.jeton;
+    if (!data.user && data.email) return data.jeton || '';
+    return '';
   }
 
   function clearSession() {

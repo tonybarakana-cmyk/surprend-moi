@@ -107,7 +107,18 @@
 
     function chargerStats() {
       var jeton = SM_AUTH.getJeton();
+      // Fallback : lire directement dans localStorage si getJeton echoue
+      if (!jeton) {
+        try {
+          var raw = localStorage.getItem(window.CONFIG.SESSION_KEY);
+          var data = raw ? JSON.parse(raw) : null;
+          jeton = (data && data.jeton) ? data.jeton : '';
+        } catch (e) {}
+      }
+      console.log('[admin] jeton utilise =', jeton ? jeton.substring(0, 8) + '...' : 'VIDE');
+
       SM_AUTH.apiGet({ action: 'admin_stats', email: session.email, jeton: jeton }).then(function (data) {
+        console.log('[admin] reponse =', data);
         if (data.error) {
           document.getElementById('stats').innerHTML = '<p style="color:#f87171;">' + data.error + '</p>';
           return;
