@@ -10,9 +10,9 @@
 
   var SESSION_DUREE = 30 * 24 * 60 * 60 * 1000; // 30 jours
 
-  function saveSession(user) {
+  function saveSession(user, jeton) {
     try {
-      var data = { user: user, expire: Date.now() + SESSION_DUREE };
+      var data = { user: user, jeton: jeton || '', expire: Date.now() + SESSION_DUREE };
       localStorage.setItem(window.CONFIG.SESSION_KEY, JSON.stringify(data));
     } catch (e) {}
   }
@@ -22,7 +22,6 @@
       var raw = localStorage.getItem(window.CONFIG.SESSION_KEY);
       if (!raw) return null;
       var data = JSON.parse(raw);
-      // Ancien format (objet user direct) : migration
       if (!data.expire && data.email) {
         saveSession(data);
         return data;
@@ -34,6 +33,15 @@
       }
       return data.user;
     } catch (e) { return null; }
+  }
+
+  function getJeton() {
+    try {
+      var raw = localStorage.getItem(window.CONFIG.SESSION_KEY);
+      if (!raw) return '';
+      var data = JSON.parse(raw);
+      return data.jeton || '';
+    } catch (e) { return ''; }
   }
 
   function clearSession() {
@@ -121,6 +129,7 @@
     sha256: sha256,
     saveSession: saveSession,
     getSession: getSession,
+    getJeton: getJeton,
     clearSession: clearSession,
     inscrireClient: inscrireClient,
     inscrireVendeur: inscrireVendeur,

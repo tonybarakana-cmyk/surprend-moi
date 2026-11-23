@@ -106,9 +106,7 @@
     });
 
     function chargerStats() {
-      var raw = localStorage.getItem(window.CONFIG.SESSION_KEY);
-      var data = raw ? JSON.parse(raw) : null;
-      var jeton = data && data.jeton ? data.jeton : '';
+      var jeton = SM_AUTH.getJeton();
       SM_AUTH.apiGet({ action: 'admin_stats', email: session.email, jeton: jeton }).then(function (data) {
         if (data.error) {
           document.getElementById('stats').innerHTML = '<p style="color:#f87171;">' + data.error + '</p>';
