@@ -65,10 +65,10 @@
       if (res.error || !res.user) {
         throw new Error(res.error || 'Email ou mot de passe incorrect');
       }
-      
-      SM_AUTH.saveSession(res.user);
-      
-      // REDIRECTION SELON LE RÔLE
+
+      // IMPORTANT : on sauvegarde le jeton renvoye par le backend
+      SM_AUTH.saveSession(res.user, res.jeton || '');
+
       if (res.user.role === 'admin') {
         window.location.href = 'dashboard-admin.html';
       } else if (res.user.role === 'vendeur') {
