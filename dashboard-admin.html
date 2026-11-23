@@ -44,6 +44,11 @@
 
   <div id="stats" class="admin-stats"></div>
 
+  <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:30px;">
+    <button id="btnNettoyerVisites" class="btn btn-ghost">Nettoyer les visites de plus de 7 jours</button>
+    <button id="btnNettoyerNegos" class="btn btn-ghost">Nettoyer les negociations de plus de 30 jours</button>
+  </div>
+
   <div class="admin-section">
     <h2 class="admin-section-title">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
@@ -100,19 +105,28 @@
       location.href = 'index.html';
     });
 
-    SM_AUTH.apiGet({ action: 'admin_stats', email: session.email }).then(function (data) {
-      var s = document.getElementById('stats');
-      s.innerHTML =
-        '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.visites || 0) + '</div><div class="admin-stat-label">Visites</div></div>' +
-        '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.vendeurs || 0) + '</div><div class="admin-stat-label">Vendeurs</div></div>' +
-        '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.clients || 0) + '</div><div class="admin-stat-label">Clients</div></div>' +
-        '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.produits || 0) + '</div><div class="admin-stat-label">Produits</div></div>' +
-        '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.negociations || 0) + '</div><div class="admin-stat-label">Negociations</div></div>';
+    function chargerStats() {
+      var raw = localStorage.getItem(window.CONFIG.SESSION_KEY);
+      var data = raw ? JSON.parse(raw) : null;
+      var jeton = data && data.jeton ? data.jeton : '';
+      SM_AUTH.apiGet({ action: 'admin_stats', email: session.email, jeton: jeton }).then(function (data) {
+        if (data.error) {
+          document.getElementById('stats').innerHTML = '<p style="color:#f87171;">' + data.error + '</p>';
+          return;
+        }
+        var s = document.getElementById('stats');
+        s.innerHTML =
+          '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.visites || 0) + '</div><div class="admin-stat-label">Visites</div></div>' +
+          '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.vendeurs || 0) + '</div><div class="admin-stat-label">Vendeurs</div></div>' +
+          '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.clients || 0) + '</div><div class="admin-stat-label">Clients</div></div>' +
+          '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.produits || 0) + '</div><div class="admin-stat-label">Produits</div></div>' +
+          '<div class="admin-stat-card"><div class="admin-stat-num">' + (data.negociations || 0) + '</div><div class="admin-stat-label">Negociations</div></div>';
 
-      remplir('tableVendeurs', data.listeVendeurs || [], ['date', 'boutique', 'email', 'telephone', 'categorie', 'zone']);
-      remplir('tableProduits', data.listeProduits || [], ['date', 'nom', 'prix', 'boutique', 'categorie']);
-      remplir('tableNegos', data.listeNegos || [], ['date', 'produit', 'vendeur']);
-    });
+        remplir('tableVendeurs', data.listeVendeurs || [], ['c0', 'c1', 'c2', 'c3', 'c4', 'c5']);
+        remplir('tableProduits', data.listeProduits || [], ['c0', 'c1', 'c2', 'c3', 'c4']);
+        remplir('tableNegos', data.listeNegos || [], ['c0', 'c1', 'c2']);
+      });
+    }
 
     function remplir(tableId, liste, colonnes) {
       var tbody = document.querySelector('#' + tableId + ' tbody');
@@ -132,6 +146,24 @@
         tbody.appendChild(tr);
       }
     }
+
+    document.getElementById('btnNettoyerVisites').addEventListener('click', function () {
+      if (!confirm('Supprimer les visites de plus de 7 jours ?')) return;
+      SM_AUTH.apiPost({ action: 'nettoyer_visites', email: session.email }).then(function () {
+        alert('Nettoyage lance. Recharge la page dans quelques secondes.');
+        chargerStats();
+      });
+    });
+
+    document.getElementById('btnNettoyerNegos').addEventListener('click', function () {
+      if (!confirm('Supprimer les negociations de plus de 30 jours ?')) return;
+      SM_AUTH.apiPost({ action: 'nettoyer_negociations', email: session.email }).then(function () {
+        alert('Nettoyage lance. Recharge la page dans quelques secondes.');
+        chargerStats();
+      });
+    });
+
+    chargerStats();
   }
 </script>
 </body>

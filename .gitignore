@@ -3,3 +3,1015 @@ node_modules/
 Thumbs.db
 *.log
 .vscode/
+
+
+
+
+
+
+
+
+Projet Surprend Moi analysé
+je veux que pour le moment tu analyse et apprend par coeur ce que je veux te donne , toi tu va repondre seulement j'ai tous capte :
+J'ai tout capté.
+
+J'ai tout capté.
+
+repond j'ai tout capte si tu as tout capte
+J'ai tout capté.
+
+tu faire ca et dis moi les fichier que je veux change
+J'ai bien lu tes notes v1.2.0. Voici ce que je constate :
+
+Ce que tu as déjà fait (dans ton archive) :
+
+Les 8 bugs corrigés
+
+La sécurité côté site (XSS, session 30j, vérification de rôle)
+
+Le confort utilisateur (inscription améliorée, connexion, catalogue, fiche produit, modales, cache, accessibilité)
+
+Le fichier js/layout.js à compléter (CONTACT)
+
+Les pages À propos / Confidentialité / etc.
+
+Ce que je ne peux PAS faire :
+Je n'ai pas accès à ton archive de fichiers (les fichiers modifiés en v1.2.0). Tout ce que j'ai, c'est :
+
+Le résumé technique initial
+
+Les ajouts/décisions après le résumé
+
+Ce fichier NOTES-AMELIORATIONS.md
+
+Donc je ne peux pas te dire "change tel fichier" avec précision, car je ne sais pas ce que contient exactement ton archive v1.2.0.
+
+Pour que je puisse t'aider concrètement, envoie-moi :
+
+Le Code.gs actuel (le backend Apps Script déployé) — c'est le point le plus critique, car c'est là que sont les failles de sécurité listées dans tes notes (admin_stats sans jeton, actions identifiées par email seul, connexion en GET, etc.)
+
+L'archive v1.2.0 (ou au moins les fichiers modifiés : js/layout.js, js/auth.js, js/app.js, js/produits.js, et les HTML principaux)
+
+La liste exacte des fichiers dans ton dossier actuel
+
+Dès que tu m'envoies le Code.gs, je te donnerai :
+
+Le Code.gs corrigé (avec LockService, jeton de session, admin_stats protégé, connexion en POST, tous_vendeurs nettoyé, etc.)
+
+La liste précise des fichiers frontend à modifier pour s'adapter (probablement js/auth.js, js/config.js, et les appels API dans les HTML)
+
+L'ordre exact des modifications à faire
+
+Envoie-moi le Code.gs en premier, c'est le plus urgent.
+
+
+Voici le résumé technique complet du projet, sans.txt
+Voici le résumé technique complet du projet, sans les codes. Copie-colle-le dans une nouvelle discussion quand celle-ci sera trop longue.
+
+---
+
+# PROJET SURPREND MOI — Résumé technique complet
+
+## 1. Concept
+
+Marketplace WhatsApp du Burundi. Les vendeurs publient leurs produits. Les acheteurs parcourent, cherchent, et cliquent sur "Discuter" pour ouvrir WhatsApp via `wa.me`. La négociation se passe entièrement sur WhatsApp, jamais sur le site.
+
+Trois types d'utilisateurs :
+- **Visiteur** (sans compte) : parcourt, cherche, clique Discuter
+- **Client** (compte) : idem + accès dashboard client
+- **Vendeur** (compte) : publie et supprime ses produits
+- **Admin** (toi) : dashboard avec statistiques
+
+## 2. Stack technique
+
+- **Hébergement** : GitHub Pages (gratuit, HTTPS)
+- **Base de données** : Google Sheets
+- **Backend / API** : Google Apps Script déployé en Application Web
+- **Frontend** : HTML, CSS, JavaScript pur (aucun framework)
+- **Authentification** : email + mot de passe haché SHA-256 côté navigateur, stocké dans le Sheet
+- **Session** : localStorage (`sm_session`)
+- **Images** : Cloudinary (upload non signé via preset `surprend_moi`, transformations à la volée)
+- **Négociation** : `wa.me` avec lien pré-rempli
+- **Compression image** : Canvas API côté navigateur avant upload Cloudinary
+
+## 3. Structure des fichiers dans Visual Studio Code
+
+```
+surprend-moi/
+├── index.html                    (Accueil, recherche, produits récents)
+├── inscription.html              (Choix client ou vendeur)
+├── inscription-client.html       (Formulaire client)
+├── inscription-vendeur.html      (Formulaire vendeur)
+├── connexion.html                (Login)
+├── dashboard-vendeur.html        (Ses produits + suppression)
+├── dashboard-client.html         (Produits + recherche avancée)
+├── dashboard-admin.html          (Stats + tableaux)
+├── ajouter-produit.html          (Formulaire + upload Cloudinary)
+├── css/
+│   └── style.css                 (Thème sombre + optimisation mobile)
+├── js/
+│   ├── config.js                 (API_URL, Cloudinary, session key)
+│   ├── track.js                  (Tracking visites, accueil uniquement)
+│   ├── auth.js                   (SHA-256, inscription, connexion, session)
+│   ├── produits.js               (CRUD produits, compression, upload Cloudinary)
+│   └── app.js                    (Création cartes produits, URLs optimisées Cloudinary)
+└── images/
+    ├── tony.jpg
+    ├── blaise.jpg
+    ├── chancy.jpg
+    └── mama.jpg
+```
+
+## 4. Google Sheets — onglets et colonnes
+
+**SHEET_ID** : `1VpZUuuQJR3CbLlbntgRd5hL7f73JrvHUOKxYcvu-lOE`
+
+**Onglet `Clients`** : Date, Nom, Email, Telephone, PasswordHash
+
+**Onglet `Vendeurs`** : Date, Nom, Boutique, Email, Telephone, Categorie, Zone, PasswordHash, Statut
+
+**Onglet `Produits`** : Date, ID, EmailVendeur, Boutique, Telephone, Nom, Prix, Categorie, Description, Photo (URL Cloudinary)
+
+**Onglet `Visites`** : Date, Page, Pseudo
+
+**Onglet `Negociations`** : Date, Produit, Vendeur, Prix
+
+**Onglet `TentativesVendeur`** : Date, Nom, WhatsApp, Message
+
+**Onglet `Admin`** : Date, Email, Password (hash), Nom
+- Email par défaut : `admin@surprendmoi.bi`
+- Hash par défaut : `ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270` (correspond à `admin1234`)
+
+## 5. Google Apps Script — fonctions exposées
+
+**GET** :
+- `?action=connexion&email=...&password=...` → `{user: {...}}` ou `{error: "..."}`
+- `?action=mes_produits&email=...` → produits du vendeur
+- `?action=tous_produits` → tous les produits
+- `?action=produits_vendeur&email=...` → produits d'un vendeur
+- `?action=admin_stats&email=...` → 5 chiffres + 5 listes
+
+**POST** (Content-Type: text/plain, mode: no-cors) :
+- `action: 'inscrire_client'`
+- `action: 'inscrire_vendeur'`
+- `action: 'ajouter_produit'` (reçoit une URL Cloudinary)
+- `action: 'supprimer_produit'`
+- `action: 'visite'`
+- `action: 'negociation'`
+- `action: 'vendeur_tentative'`
+
+**URL de déploiement** :
+`https://script.google.com/macros/s/AKfycbyuFUZLcuERegbLUMJG26M3bz_rJjeBb8raPqXB-b9XiUlmc6C7WKQ4YuuJPezuPDby/exec`
+
+**Configuration** : Application Web, exécuter en tant que Moi, accessible à Tout le monde. À chaque modification de Code.gs → Déployer > Gérer les déploiements > crayon > Nouvelle version > Déployer (URL inchangée).
+
+## 6. Cloudinary
+
+- **Compte** : créé via VPN (blocage pays à l'inscription)
+- **Cloud name** : à renseigner dans `js/config.js` (variable `CLOUDINARY_CLOUD_NAME`)
+- **Preset** : `surprend_moi`, en mode **Unsigned**
+- **Asset folder** : `samples/ecommerce` (par défaut)
+- **Pas de transformation dans le preset** : les transformations sont appliquées dans l'URL au moment de l'affichage via `optimiserUrlCloudinary(url, 300)` qui insère `w_300,q_auto,f_auto` après `/upload/`
+- **Compression avant upload** : `compresserImage(file, 600, 0.65)` côté navigateur, avec détection automatique de support WebP (mais la version actuelle produit du JPEG)
+- **Upload** : via `FormData` + `fetch` vers `https://api.cloudinary.com/v1_1/{cloud_name}/image/upload`
+
+## 7. Logique d'authentification
+
+- Le mot de passe est haché en SHA-256 côté navigateur avant l'envoi
+- Le hash est stocké dans le Sheet (colonne PasswordHash)
+- La session est sauvegardée dans localStorage sous la clé `sm_session`
+- Après connexion : admin → `dashboard-admin.html`, vendeur → `dashboard-vendeur.html`, client → `dashboard-client.html`
+- L'admin est reconnu par l'email `admin@surprendmoi.bi` (variable `ADMIN_EMAIL` dans Code.gs)
+- Le mot de passe admin est le hash stocké en C2 de l'onglet Admin
+
+## 8. Logique de tracking
+
+- **Une visite est comptée uniquement depuis `index.html`** (vérification dans `track.js`)
+- Les autres pages ne comptent pas
+- Chaque visite écrit 1 ligne dans `Visites`
+- Le dashboard admin affiche 5 chiffres : Visites, Vendeurs, Clients, Produits, Négociations
+- Le dashboard admin affiche 5 tableaux : Vendeurs, Produits, Visites, Négociations, Tentatives vendeur
+- Chaque clic sur "Discuter" écrit 1 ligne dans `Negociations`
+
+## 9. Design
+
+- **Thème** : sombre (`--bg: #0b0b10`), textes blancs, accents cyan/rose/vert
+- **Mobile-first** : media queries à 480px et 360px, boutons min 44px de hauteur, `touch-action: manipulation`
+- **Grille produits** : 2 colonnes mobile, 3 tablette, 4 desktop
+- **Images** : `loading="lazy"` + `decoding="async"`
+- **Recherche avancée** : mot-clé, catégorie, prix min/max, sur `index.html` et `dashboard-client.html`
+
+## 10. Problèmes rencontrés et solutions
+
+**CORS** : Apps Script refuse les POST en `application/json`. Solution : `Content-Type: text/plain;charset=utf-8` + `mode: 'no-cors'`. Conséquence : impossible de lire la réponse des POST, il faut vérifier dans le Sheet.
+
+**`(p.telephone || "").replace is not a function`** : Google Sheets renvoie les téléphones comme des nombres. Solution : `String(p.telephone == null ? '' : p.telephone).replace(...)`.
+
+**Onglets mal nommés** : le code cherchait `Vendeurs` mais les onglets s'appelaient `Vendeur`, `produit`, etc. Solution : renommer exactement.
+
+**`{"ok":true}` sur `?action=connexion`** : le déploiement pointait sur une ancienne version du code. Solution : redéployer en nouvelle version.
+
+**Erreurs réseau** (`ERR_NAME_NOT_RESOLVED`, `ERR_SOCKET_NOT_CONNECTED`, `ERR_CONNECTION_TIMED_OUT`, `ERR_CONNECTION_CLOSED`) : instabilité de la connexion burundaise vers `script.google.com`. Pas un bug de code.
+
+**Images base64 dans le Sheet** : trop lourdes, ralentissent tout. Solution : migration vers Cloudinary, le Sheet ne stocke plus que l'URL.
+
+**"Impossible d'ouvrir le fichier"** : bug temporaire de Google Drive, pas un problème de projet.
+
+## 11. Commandes Git
+
+**Premier push** (déjà fait) :
+```
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin https://github.com/tonybarakana-cmyk/surprend-moi.git
+git branch -M main
+git push -u origin main
+```
+
+**À chaque modification** :
+```
+git add .
+git commit -m "Description"
+git push
+```
+
+**GitHub Pages** : Settings > Pages > Source : Deploy from a branch > main / (root). Site en ligne sur `https://tonybarakana-cmyk.github.io/surprend-moi/`.
+
+**Pseudo GitHub** : `tonybarakana-cmyk`
+
+## 12. État actuel du projet
+
+**Fonctionnel** :
+- Inscription client et vendeur
+- Connexion avec redirection par rôle
+- Dashboard vendeur avec liste des produits et suppression
+- Dashboard client avec recherche avancée
+- Dashboard admin avec 5 chiffres et 5 tableaux
+- Ajout de produit avec upload Cloudinary
+- Compression d'image côté navigateur
+- Recherche avancée sur l'accueil
+- Tracking des visites (accueil uniquement)
+- Tracking des négociations
+- Design mobile responsive
+- Thème sombre
+
+**Non testé ou en attente** :
+- Redirection automatique depuis `index.html` si session active (discuté mais pas encore implémenté)
+- Bouton "Voir le site" dans les dashboards (discuté mais pas implémenté)
+- Lien TinyURL (`tinyurl.com/surprend-moi`) créé mais à vérifier
+
+## 13. Limites et points d'attention
+
+- **Google Apps Script** : ~500 requêtes/jour en usage gratuit, timeout à 6 minutes, pas de gestion de la simultanéité exacte
+- **Google Sheets** : ralentit au-delà de ~500 visites/jour ou ~20 000 lignes dans un onglet
+- **Cloudinary gratuit** : 25 Go de stockage, 25 Go de bande passante/mois
+- **Connexion internet au Burundi** : instable vers `script.google.com`, cause d'erreurs aléatoires
+- **Pas de lecture des réponses POST** : à cause du `no-cors`, impossible d'afficher un vrai message d'erreur pour les POST
+- **Pas de session serveur** : session côté client uniquement, vulnérable si quelqu'un modifie localStorage
+
+## 14. Améliorations possibles (non faites)
+
+- Redirection automatique depuis `index.html` selon la session
+- Bouton "Voir le site" depuis les dashboards
+- WebP au lieu de JPEG (supporté par tes téléphones cibles : Galaxy A14, Nokia C22/C30/C32, Tecno Spark)
+- Compression plus agressive (500px / 0.60)
+- Minification CSS/JS
+- Nom de domaine personnalisé (`surprendmoi.com`, ~10-15 USD/an)
+- Migration vers un vrai backend (PHP/MySQL) si le trafic dépasse les limites
+- Protection anti-collision dans Apps Script (`LockService`)
+- Ajout multiple de produits en série
+
+## 15. Choix à respecter
+
+- Tout gratuit au lancement (GitHub Pages, Google Sheets, Apps Script, Cloudinary)
+- Pas d'authentification obligatoire pour les visiteurs
+- Négociation toujours sur WhatsApp via `wa.me`
+- Pas de paiement en ligne
+- Code sans emoji, professionnel
+- Interface en français
+- Optimisé pour le Burundi (2G, téléphones Android récents bas de gamme, connexion instable)
+
+---
+
+Voilà. Tu peux copier-coller ce résumé dans une nouvelle discussion, n'importe quelle IA comprendra immédiatement l'état exact du projet, les fichiers, les fonctionnalités, les problèmes connus et les choix techniques.Projet Surprend Moi analysé
+je veux que pour le moment tu analyse et apprend par coeur ce que je veux te donne , toi tu va repondre seulement j'ai tous capte :
+J'ai tout capté.
+
+J'ai tout capté.
+
+repond j'ai tout capte si tu as tout capte
+J'ai tout capté.
+
+tu faire ca et dis moi les fichier que je veux change
+J'ai bien lu tes notes v1.2.0. Voici ce que je constate :
+
+Ce que tu as déjà fait (dans ton archive) :
+
+Les 8 bugs corrigés
+
+La sécurité côté site (XSS, session 30j, vérification de rôle)
+
+Le confort utilisateur (inscription améliorée, connexion, catalogue, fiche produit, modales, cache, accessibilité)
+
+Le fichier js/layout.js à compléter (CONTACT)
+
+Les pages À propos / Confidentialité / etc.
+
+Ce que je ne peux PAS faire :
+Je n'ai pas accès à ton archive de fichiers (les fichiers modifiés en v1.2.0). Tout ce que j'ai, c'est :
+
+Le résumé technique initial
+
+Les ajouts/décisions après le résumé
+
+Ce fichier NOTES-AMELIORATIONS.md
+
+Donc je ne peux pas te dire "change tel fichier" avec précision, car je ne sais pas ce que contient exactement ton archive v1.2.0.
+
+Pour que je puisse t'aider concrètement, envoie-moi :
+
+Le Code.gs actuel (le backend Apps Script déployé) — c'est le point le plus critique, car c'est là que sont les failles de sécurité listées dans tes notes (admin_stats sans jeton, actions identifiées par email seul, connexion en GET, etc.)
+
+L'archive v1.2.0 (ou au moins les fichiers modifiés : js/layout.js, js/auth.js, js/app.js, js/produits.js, et les HTML principaux)
+
+La liste exacte des fichiers dans ton dossier actuel
+
+Dès que tu m'envoies le Code.gs, je te donnerai :
+
+Le Code.gs corrigé (avec LockService, jeton de session, admin_stats protégé, connexion en POST, tous_vendeurs nettoyé, etc.)
+
+La liste précise des fichiers frontend à modifier pour s'adapter (probablement js/auth.js, js/config.js, et les appels API dans les HTML)
+
+L'ordre exact des modifications à faire
+
+Envoie-moi le Code.gs en premier, c'est le plus urgent.
+
+
+Voici tout ce qu'on a discuté après le résumé.txt
+Voici tout ce qu'on a discuté **après** le résumé technique que tu m'as demandé de mémoriser. Copie-colle ceci dans une nouvelle discussion.
+
+---
+
+# SURPREND MOI — Ajouts et décisions après le résumé technique
+
+## 1. Gestion des produits vendus
+
+**Décision validée :**
+- Chaque produit a un statut `disponible` ou `vendu`
+- Le vendeur clique "Marquer vendu" → le produit reste visible **48 heures** sur l'accueil avec un badge vert "VENDU"
+- Après 48h, le produit est **supprimé définitivement** du Sheet (pas de corbeille)
+- Le vendeur peut "Restaurer" pendant les 48h → redevient disponible
+- Pas d'expiration pour les produits disponibles (pas de renouvellement)
+- Pas de limite de produits par vendeur pour l'instant
+
+**Colonnes ajoutées dans l'onglet `Produits` :**
+- Colonne K : `Statut` (`disponible` / `vendu`)
+- Colonne L : `DateVente` (date au moment du clic "Marquer vendu")
+
+**Compte à rebours :** démarre au moment exact du clic "Marquer vendu". Affiché dans le dashboard vendeur, mis à jour toutes les minutes.
+
+---
+
+## 2. Nettoyage admin
+
+**Décision validée (Option A) :**
+- Boutons manuels dans `dashboard-admin.html` :
+  - "Nettoyer les visites de plus de 7 jours"
+  - "Nettoyer les négociations de plus de 30 jours"
+- Chaque bouton appelle une fonction Apps Script qui supprime les lignes correspondantes
+- Message de confirmation avec le nombre de lignes supprimées
+
+**Pas encore implémenté.**
+
+---
+
+## 3. Suppression des photos Cloudinary
+
+**Décision :** on attend.
+- Quand un produit est supprimé, la photo reste sur Cloudinary pour l'instant
+- La suppression Cloudinary sera implémentée plus tard (étape 4)
+- Nécessite une signature API (API Key + Secret) côté Apps Script
+
+---
+
+## 4. Design
+
+**Décision validée :**
+- Refonte des cartes produits style Alibaba : image carrée dominante, nom sur 2 lignes max, prix en gras, boutique discrète, badge "VENDU" en haut à gauche
+- À faire à l'étape 2, pas encore implémenté
+
+---
+
+## 5. Logo
+
+**Discuté :**
+- Pas de logo professionnel pour l'instant
+- 3 options proposées : Canva (gratuit, 10 min), Ideogram/Microsoft Designer (IA gratuite), designer burundais (20 000 à 50 000 FBu)
+- Une fois créé : `images/logo.png` + `<link rel="icon">` dans chaque page + remplacer le texte du header par l'image
+- **Pas encore fait**
+
+---
+
+## 6. Bugs et problèmes rencontrés
+
+**Bug principal en cours : "Marquer vendu" ne fonctionne pas**
+
+- Le code `Code.gs` est bon (contient `marquerVendu`, `restaurerProduit`, `nettoyerProduitsVendus`, `ligneProduit` avec statut et dateVente)
+- Le fichier `js/config.js`, `js/produits.js`, `js/app.js`, `dashboard-vendeur.html` et CSS ont été remplacés
+- **Problème identifié : le déploiement Apps Script ne publie pas la nouvelle version**
+- L'URL `?action=mes_produits` renvoie encore l'ancien JSON sans `"statut"` ni `"dateVente"`
+- Solution proposée mais pas testée : créer un **nouveau déploiement** (pas modifier l'existant), copier la nouvelle URL, la mettre dans `js/config.js`
+
+**Ordre correct des colonnes dans le Sheet (validé) :**
+```
+A: Date | B: ID | C: EmailVendeur | D: Boutique | E: Telephone | F: Nom | G: Prix | H: Categorie | I: Description | J: Photo | K: Statut | L: DateVente
+```
+
+**Erreurs rencontrées (pas des bugs de code) :**
+- `ERR_SOCKET_NOT_CONNECTED`, `ERR_NAME_NOT_RESOLVED`, `ERR_CONNECTION_CLOSED`, `ERR_CONNECTION_TIMED_OUT` = instabilité de la connexion burundaise vers `script.google.com`
+- `Images loaded lazily and replaced with placeholders` = message informatif d'Edge sur `loading="lazy"`, pas une erreur
+- `Failed to load resource: favicon.ico` = normal, pas de favicon configuré
+
+---
+
+## 7. Décisions techniques
+
+**Google Sheets vs MySQL Cloud :**
+
+- **Décision finale : rester sur Google Sheets** pour l'instant
+- Raisons : gratuit sans carte bancaire, 15 Go de stockage, aucune limite de temps, suffisant pour 500 vendeurs / 5 000 produits / 100 000 clients
+- Les MySQL Cloud gratuits (Aiven, Railway, PlanetScale) exigent une carte bancaire internationale, ce qui est compliqué au Burundi
+- Migration vers MySQL prévue quand : 20+ vendeurs, 200+ visites/jour, ou revenus permettant 5 000 à 10 000 FBu/mois d'hébergement
+- Migration prendra 1 à 2 semaines (PHP + MySQL + modification de tous les fichiers)
+
+**Capacité Google Sheets :**
+- 10 000 000 cellules par fichier
+- Limite pratique avant ralentissement : 20 000 lignes par onglet
+- Ton projet tient 2 à 3 ans sans problème, avec nettoyage régulier des visites et négociations
+
+**Optimisation mobile :**
+- CSS optimisé pour mobile : boutons 44px minimum, `touch-action: manipulation`, media queries à 480px et 360px
+- Thème sombre conservé (`--bg: #0b0b10`)
+- `loading="lazy"` + `decoding="async"` sur toutes les images
+
+**Cloudinary :**
+- Cloud name : `mtwv68nx`
+- Preset : `surprend_moi` (Unsigned)
+- Compression avant upload : 600px / qualité 0.65
+- Transformations à l'affichage via `optimiserUrlCloudinary(url, 300)` qui insère `w_300,q_auto,f_auto` après `/upload/`
+
+---
+
+## 8. Redirection après connexion
+
+**Discuté mais pas encore implémenté :**
+
+- Ajouter dans `index.html` un script qui vérifie la session en localStorage
+- Si client connecté → rediriger vers `dashboard-client.html`
+- Si vendeur connecté → `dashboard-vendeur.html`
+- Si admin connecté → `dashboard-admin.html`
+- Si visiteur → rester sur `index.html`
+- Ajouter `?public=1` dans l'URL pour forcer l'affichage de `index.html` même connecté
+- Ajouter un bouton "Voir le site" dans les dashboards
+
+---
+
+## 9. URLs propres et nom de domaine
+
+**Discuté mais pas fait :**
+
+- Les URLs avec `.html` sont moche mais pas un problème pour les utilisateurs
+- Solution gratuite possible : créer des dossiers (`connexion/index.html` → URL `/connexion/`), mais beaucoup de travail et risque de casser des liens
+- Solution propre : nom de domaine personnalisé (`surprendmoi.com`, ~10-15 USD/an)
+- Migration vers Cloudflare Pages permettrait des URLs sans `.html` sans slash
+- **Décision : attendre d'avoir un nom de domaine, ne rien faire maintenant**
+
+**Raccourcisseur de lien (TinyURL) :**
+- Créer un lien court `tinyurl.com/surprend-moi` vers `https://tonybarakana-cmyk.github.io/surprend-moi/`
+- Gratuit, n'expire pas, parfait pour un statut WhatsApp
+
+---
+
+## 10. État actuel du projet
+
+**Fonctionnel :**
+- Inscription et connexion (client, vendeur, admin)
+- Ajout de produits avec upload Cloudinary
+- Compression d'image côté navigateur
+- Recherche avancée sur `index.html` et `dashboard-client.html`
+- Dashboard admin avec 5 chiffres et 5 tableaux
+- Tracking des visites (accueil uniquement)
+- Tracking des négociations
+- Thème sombre
+- Optimisation mobile complète
+
+**En cours de correction :**
+- Bug "Marquer vendu" → déploiement Apps Script à refaire (nouveau déploiement, pas modification)
+
+**Discuté mais pas encore fait :**
+- Design des cartes produits style Alibaba
+- Boutons de nettoyage admin
+- Suppression Cloudinary automatique
+- Redirection automatique depuis `index.html`
+- Bouton "Voir le site" dans les dashboards
+- Logo
+- Raccourcisseur TinyURL (créé mais à vérifier)
+- WebP au lieu de JPEG
+
+---
+
+## 11. Fichiers du projet
+
+```
+surprend-moi/
+├── index.html
+├── inscription.html
+├── inscription-client.html
+├── inscription-vendeur.html
+├── connexion.html
+├── dashboard-vendeur.html
+├── dashboard-client.html
+├── dashboard-admin.html
+├── ajouter-produit.html
+├── css/style.css
+├── js/
+│   ├── config.js
+│   ├── track.js
+│   ├── auth.js
+│   ├── produits.js
+│   └── app.js
+└── images/
+```
+
+**GitHub** : `https://github.com/tonybarakana-cmyk/surprend-moi`
+
+**Site en ligne** : `https://tonybarakana-cmyk.github.io/surprend-moi/`
+
+**Cloudinary** : cloud name `mtwv68nx`, preset `surprend_moi` (Unsigned)
+
+**Apps Script URL actuelle** : `https://script.google.com/macros/s/AKfycbyuFUZLcuERegbLUMJG26M3bz_rJjeBb8raPqXB-b9XiUlmc6C7WKQ4YuuJPezuPDby/exec` (à remplacer par la nouvelle URL après le nouveau déploiement)
+
+**Google Sheet ID** : `1VpZUuuQJR3CbLlbntgRd5hL7f73JrvHUOKxYcvu-lOE`
+
+---
+
+## 12. Prochaine étape immédiate
+
+**Régler le bug "Marquer vendu" :**
+
+1. Créer un **nouveau déploiement** dans Apps Script (pas modifier l'existant) : Déployer > Nouveau déploiement > Application Web > Exécuter en tant que Moi > Qui a accès : Tout le monde
+2. Copier la nouvelle URL
+3. Remplacer `API_URL` dans `js/config.js` par la nouvelle URL
+4. Tester avec `NOUVELLE_URL?action=mes_produits&email=tonybarakana@gmail.com` → doit contenir `"statut":"disponible"`
+5. Push GitHub
+6. Tester le bouton "Marquer vendu" sur le dashboard vendeur
+
+Une fois ce bug réglé, passer à l'étape 2 (design Alibaba) ou à l'étape 3 (nettoyage admin).
+
+---
+
+Voilà. Tu peux copier-coller ce résumé dans une nouvelle discussion. L'IA comprendra exactement où on en est, ce qui est fait, ce qui reste à faire, et le bug en cours.
+Résumé projet Surprend Moi
+The file has been read and understood. It contains a complete technical summary of the project "Surprend Moi," a WhatsApp marketplace for Burundi. Here's a structured breakdown of its contents:
+
+Project Overview
+Surprend Moi — A marketplace that aggregates WhatsApp sellers in Burundi. Buyers browse products, click "Discuter," and are redirected to the seller's wa.me link. All negotiation happens on WhatsApp, never on the site.
+
+Account types:
+
+Vendeur (Seller): Registers, logs in, publishes products (photo + name + price + category + description), deletes sold products.
+
+Client (Buyer): Registers, logs in, browses products.
+
+Visiteur (Visitor): No account, can browse and click to chat.
+
+Admin: Dashboard with all statistics (visits, sellers, products, negotiations, seller attempts).
+
+Technical Stack
+Component	Technology
+Hosting	GitHub Pages (free, HTTPS)
+Database	Google Sheets
+Backend/API	Google Apps Script (Web App)
+Frontend	HTML, CSS, vanilla JavaScript (2G-compatible, lightweight)
+Negotiation	wa.me (WhatsApp link)
+Image compression	Canvas API (browser-side)
+Authentication	Email + SHA-256 hashed password, stored in localStorage, compared to hash in Google Sheets
+File Structure
+text
+surprend-moi/
+├── index.html                    (Home + recent products)
+├── inscription.html              (Choose client or seller)
+├── inscription-client.html       (Client form)
+├── inscription-vendeur.html      (Seller form)
+├── connexion.html                (Login)
+├── dashboard-vendeur.html        (Seller shop + product deletion)
+├── dashboard-admin.html          (Admin stats)
+├── ajouter-produit.html          (Product form + photo upload)
+├── css/
+│   └── style.css                 (Premium dark design, cards, forms, product grid)
+├── js/
+│   ├── config.js                 (API_URL, name, session key)
+│   ├── track.js                  (Visit tracking via sendBeacon)
+│   ├── auth.js                   (SHA-256, registration, login, session)
+│   ├── produits.js               (Product CRUD + image compression)
+│   └── app.js                    (Product card creation, formatting)
+└── images/
+    ├── tony.jpg
+    ├── blaise.jpg
+    ├── chancy.jpg
+    └── mama.jpg
+Google Sheets — Tabs and Columns
+SHEET_ID: 1VpZUuuQJR3CbLlbntgRd5hL7f73JrvHUOKxYcvu-lOE
+
+Tab	Columns
+Visites	Date, Page, Pseudo
+Messages	Date, Destinataire, Style, Message (not used, NGL legacy)
+Negociations	Date, Produit, Vendeur, Prix
+VendeursTentatives	Date, Nom, WhatsApp, Message (NGL legacy)
+TentativesVendeur	Date, Nom, WhatsApp, Message
+Clients	Date, Nom, Email, Telephone, PasswordHash
+Vendeurs	Date, Nom, Boutique, Email, Telephone, Categorie, Zone, PasswordHash, Statut
+Produits	Date, ID, EmailVendeur, Boutique, Telephone, Nom, Prix, Categorie, Description, Photo
+Admin	Date, Email, Password, Nom
+Google Apps Script — Code.gs
+GET endpoints:
+
+?action=connexion&email=...&password=... → {user: {...}} or {error: "..."}
+
+?action=mes_produits&email=... → products of logged-in seller
+
+?action=tous_produits → all products
+
+?action=produits_vendeur&email=... → products of a specific seller
+
+?action=admin_stats&email=... → full stats for admin
+
+POST endpoints (sent as text/plain to avoid CORS):
+
+action: 'inscrire_client' → adds to Clients tab
+
+action: 'inscrire_vendeur' → adds to Vendeurs tab
+
+action: 'ajouter_produit' → adds to Produits tab
+
+action: 'supprimer_produit' → deletes a row from Produits
+
+action: 'visite' → adds to Visites tab
+
+action: 'negociation' → adds to Negociations tab
+
+action: 'vendeur_tentative' → adds to TentativesVendeur tab
+
+Deployment URL:
+
+text
+https://script.google.com/macros/s/AKfycbyuFUZLcuERegbLUMJG26M3bz_rJjeBb8raPqXB-b9XiUlmc6C7WKQ4YuuJPezuPDby/exec
+Deployment config:
+
+Type: Web App
+
+Execute as: Me
+
+Who has access: Everyone
+
+After code changes: Deploy > Manage deployments > pencil > New version > Deploy (URL stays the same)
+
+Authentication
+Password hashed with SHA-256 in the browser before sending
+
+Hash stored in Google Sheets (PasswordHash column)
+
+Session saved in localStorage (sm_session)
+
+Role-based redirect after login: admin → dashboard-admin.html, seller → dashboard-vendeur.html, client → index.html
+
+No JWT, no server session (Apps Script limitation)
+
+Default admin account:
+
+Email: admin@surprendmoi.bi
+
+Initial password: admin1234 (change in Admin tab and Code.gs)
+
+Image Management
+Seller picks a photo in ajouter-produit.html
+
+Photo compressed in-browser via Canvas: resized to max 800px, quality 0.75
+
+Compressed photo converted to base64 and sent in POST
+
+Photo column in Produits tab contains full base64 (long text)
+
+Limit: beyond 20 products with photos, Google Sheets becomes slow; will need external storage (Imgur, Cloudinary)
+
+Problems Encountered and Solutions
+CORS: Apps Script doesn't accept POST with Content-Type: application/json. Solution: send as Content-Type: text/plain;charset=utf-8 with mode: 'no-cors'. Consequence: site can't read POST response. To verify a POST worked, check the Sheet, not the site response.
+
+(p.telephone || "").replace is not a function: Google Sheets returns phone numbers as numbers, not text. Solution: convert to string before replace.
+
+javascript
+var telephone = String(p.telephone == null ? '' : p.telephone);
+var tel = telephone.replace(/[^0-9]/g, '');
+ERR_NAME_NOT_RESOLVED, ERR_CONNECTION_CLOSED, ERR_SOCKET_NOT_CONNECTED: Internet connection issues in Burundi interrupting communication with script.google.com. Not a code bug.
+
+Misnamed tabs: Code looked for Vendeurs but tabs were named Vendeur, produit, etc. Solution: rename exactly as in code.
+
+Git Commands
+First push:
+
+text
+git init
+git add .
+git commit -m "Initial commit - Surprend Moi"
+git remote add origin https://github.com/tonybarakana-cmyk/surprend-moi.git
+git branch -M main
+git push -u origin main
+After each modification:
+
+text
+git add .
+git commit -m "Description"
+git push
+GitHub Pages: Settings > Pages > Source: Deploy from a branch > main / (root). Site live at:
+
+text
+https://tonybarakana-cmyk.github.io/surprend-moi/
+Known Current Limitations
+Google Apps Script: ~500 requests/day quota on free tier
+
+Google Sheets: slows beyond 500 visits/day or 20 products with base64 photos
+
+No POST response reading due to no-cors: impossible to show real error messages for registrations and product additions
+
+No server session: session is purely client-side (localStorage)
+
+Unstable internet in Burundi: cause of random errors
+
+Planned Next Steps
+Fix and validate product addition (photo properly saved in Sheet, appears in seller dashboard)
+
+Add real error messages for POST (requires leaving no-cors, thus changing backend)
+
+Future migration to PHP + MySQL hosting (free InfinityFree, or paid Hostinger) once platform has users
+
+Add online payment (Lumicash, Ecocash, Smart Pesa) later
+
+Monetization: seller subscription (10,000,000 FBu/month once platform is full)
+
+The summary is complete and self-contained. If you'd like, I can now help you continue from any specific point — for example, fixing product addition, migrating the backend, or improving error handling. What would you like to tackle first?
+
+je peux ziper le projet pour que l'ia claude le dechiffre
+Oui, tu peux tout à fait zipper le projet et le donner à Claude — mais il y a quelques nuances importantes à connaître avant de le faire.
+
+Ce qui marche bien
+Claude (comme moi) peut lire des archives ZIP si tu les joins directement dans la conversation (via le bouton trombone / pièce jointe). Il décompressera et lira les fichiers texte (.html, .css, .js, .gs, .md, etc.) sans problème.
+
+Ce qui ne marchera pas ou mal
+Les images (tony.jpg, blaise.jpg, etc.) : Claude ne "déchiffre" pas les images, il peut les voir mais pas les analyser comme du code. Ce n'est pas un problème pour ton projet.
+
+La taille : si le ZIP contient beaucoup de photos base64 ou des fichiers lourds, l'upload peut échouer. Limite pratique ~30 Mo par fichier sur Claude.
+
+Le ZIP n'est pas "chiffré" : "déchiffrer" n'est pas le bon mot — Claude va juste lire les fichiers. Si tu veux vraiment protéger le contenu, il faudrait un ZIP avec mot de passe, mais Claude ne peut pas ouvrir les ZIP protégés par mot de passe. Donc : ZIP sans mot de passe.
+
+Le fichier Code.gs : c'est le plus important. Assure-toi qu'il est bien inclus dans le ZIP — c'est le backend Apps Script, et sans lui Claude ne peut pas t'aider sur l'API.
+
+Ce que je te recommande
+Option A — ZIP complet (sans mot de passe)
+Le plus simple. Claude voit toute la structure, tous les fichiers, et peut repartir exactement de l'état réel du projet.
+
+Option B — ZIP + le résumé technique
+Encore mieux : joins le ZIP et le fichier .txt que tu m'as donné. Claude aura à la fois le code réel et le contexte historique (problèmes rencontrés, décisions prises, prochaines étapes).
+
+Option C — Pas de ZIP, juste les fichiers clés
+Si le ZIP est trop lourd, joins séparément :
+
+Code.gs (le backend)
+
+js/produits.js (le CRUD produits + compression image — c'est là que se trouve le bug d'ajout de produit)
+
+js/auth.js
+
+ajouter-produit.html
+
+dashboard-vendeur.html
+
+Ma recommandation concrète
+Fais un ZIP sans mot de passe, sans le dossier images/ (inutile pour le debug), et joins-le avec le résumé .txt. Dis à Claude quelque chose comme :
+
+"Voici le ZIP du projet Surprend Moi et le résumé technique. Le problème prioritaire est l'ajout de produit : la photo ne s'enregistre pas bien dans le Sheet et le produit n'apparaît pas dans le dashboard vendeur. Peux-tu analyser Code.gs, js/produits.js et ajouter-produit.html et me dire où est le bug ?"
+
+Ça, c'est la manière la plus efficace de repartir.
+
+Tu veux que je t'aide à préparer la liste exacte des fichiers à mettre dans le ZIP, ou à rédiger le prompt d'ouverture pour Claude ?
+
+j'ai donner tous le projet surprend moi ziper dans claude pour que il me donne la version ameliore mais ce que tu dois savoir c'est que c'est toi qui connait tous les detaille car c'est toi qui a concu ca  le lien tous et j'ai peur que ca va basculer avec le projet deja existant comment fais pour que le projet ne s'entrechoque moi je propose que je remplace le code dans le projet existant et le pusher sur git normalement tu me propose quoi dis l'essentielle seulement
+Ta proposition est la bonne : remplace les fichiers un par un dans le projet existant, puis push. Ne crée pas un nouveau repo.
+
+L'essentiel :
+
+Garde le même repo GitHub (surprend-moi), la même URL Apps Script, le même SHEET_ID. Ne change rien de ça.
+
+Sauvegarde d'abord : fais une branche backup ou copie le dossier actuel ailleurs avant de remplacer.
+
+Remplace fichier par fichier (pas tout d'un coup) : commence par js/produits.js et Code.gs (le bug prioritaire), teste, puis les autres.
+
+Après chaque remplacement : git add . && git commit -m "..." && git push — et teste le site en ligne. Si ça casse, git revert te ramène à l'état d'avant.
+
+Si Claude a changé la structure des colonnes du Sheet : ne touche pas au Sheet avant d'avoir vérifié que le nouveau Code.gs lit exactement les mêmes onglets/colonnes que l'ancien. C'est là que ça s'entrechoque.
+
+Ignore les fichiers inutiles que Claude aurait pu ajouter (README, package.json, etc.) — garde seulement ce qui correspond à ton arborescence actuelle.
+
+En résumé : même repo, remplacement progressif, commit après chaque étape, Sheet inchangé tant que pas vérifié.
+
+
+Voici un résumé technique complet de tout ce qu'on.txt
+Voici un résumé technique complet de tout ce qu'on a fait. Copie-colle-le dans une nouvelle discussion si tu veux repartir de zéro avec une autre IA.
+
+---
+
+# PROJET : SURPREND MOI — Marketplace WhatsApp du Burundi
+
+## 1. Concept
+
+Plateforme qui regroupe les vendeurs WhatsApp du Burundi. Les acheteurs parcourent les produits, cliquent sur un bouton "Discuter", et sont redirigés vers `wa.me` du vendeur. Toute la négociation se passe sur WhatsApp, jamais sur le site.
+
+Deux types de comptes :
+
+- **Vendeur** : s'inscrit, se connecte, publie ses produits (photo + nom + prix + catégorie + description), supprime ses produits vendus.
+- **Client** : s'inscrit, se connecte, parcourt les produits.
+- **Visiteur** (sans compte) : peut parcourir les produits et cliquer pour discuter.
+
+Un **admin** (toi) a un tableau de bord avec toutes les statistiques : visites, vendeurs, produits, négociations, tentatives vendeur.
+
+## 2. Stack technique
+
+- **Hébergement** : GitHub Pages (gratuit, HTTPS)
+- **Base de données** : Google Sheets
+- **Backend / API** : Google Apps Script (Web App déployée)
+- **Frontend** : HTML, CSS, JavaScript pur (compatible 2G, léger)
+- **Négociation** : `wa.me` (lien WhatsApp)
+- **Compression d'image** : Canvas API côté navigateur
+- **Authentification** : email + mot de passe haché en SHA-256, stocké dans localStorage côté client, comparé au hash stocké dans Google Sheets
+
+## 3. Structure des fichiers
+
+```
+surprend-moi/
+├── index.html                    (Accueil + produits récents)
+├── inscription.html              (Choix client ou vendeur)
+├── inscription-client.html       (Formulaire client)
+├── inscription-vendeur.html      (Formulaire vendeur)
+├── connexion.html                (Login)
+├── dashboard-vendeur.html        (Boutique du vendeur + suppression produit)
+├── dashboard-admin.html          (Stats admin)
+├── ajouter-produit.html          (Formulaire produit + upload photo)
+├── css/
+│   └── style.css                 (Design premium dark, cartes, formulaires, grille produits)
+├── js/
+│   ├── config.js                 (API_URL, nom, session key)
+│   ├── track.js                  (Tracking des visites via sendBeacon)
+│   ├── auth.js                   (SHA-256, inscription, connexion, session)
+│   ├── produits.js               (CRUD produits + compression image)
+│   └── app.js                    (Création des cartes produits, formatage)
+└── images/
+    ├── tony.jpg
+    ├── blaise.jpg
+    ├── chancy.jpg
+    └── mama.jpg
+```
+
+## 4. Google Sheets — onglets et colonnes
+
+Le SHEET_ID est : `1VpZUuuQJR3CbLlbntgRd5hL7f73JrvHUOKxYcvu-lOE`
+
+**Onglet `Visites`** : Date, Page, Pseudo
+
+**Onglet `Messages`** : Date, Destinataire, Style, Message (pas utilisé dans Surprend Moi, héritage de NGL)
+
+**Onglet `Negociations`** : Date, Produit, Vendeur, Prix
+
+**Onglet `VendeursTentatives`** : Date, Nom, WhatsApp, Message (héritage NGL)
+
+**Onglet `TentativesVendeur`** : Date, Nom, WhatsApp, Message
+
+**Onglet `Clients`** : Date, Nom, Email, Telephone, PasswordHash
+
+**Onglet `Vendeurs`** : Date, Nom, Boutique, Email, Telephone, Categorie, Zone, PasswordHash, Statut
+
+**Onglet `Produits`** : Date, ID, EmailVendeur, Boutique, Telephone, Nom, Prix, Categorie, Description, Photo
+
+**Onglet `Admin`** : Date, Email, Password, Nom
+
+## 5. Google Apps Script — Code.gs
+
+Fonctions exposées via l'API Web :
+
+**GET** :
+
+- `?action=connexion&email=...&password=...` → renvoie `{user: {...}}` ou `{error: "..."}`
+- `?action=mes_produits&email=...` → produits du vendeur connecté
+- `?action=tous_produits` → tous les produits
+- `?action=produits_vendeur&email=...` → produits d'un vendeur spécifique
+- `?action=admin_stats&email=...` → stats complètes pour l'admin
+
+**POST** (en `text/plain` pour éviter CORS) :
+
+- `action: 'inscrire_client'` → ajoute dans onglet Clients
+- `action: 'inscrire_vendeur'` → ajoute dans onglet Vendeurs
+- `action: 'ajouter_produit'` → ajoute dans onglet Produits
+- `action: 'supprimer_produit'` → supprime une ligne de Produits
+- `action: 'visite'` → ajoute dans onglet Visites
+- `action: 'negociation'` → ajoute dans onglet Negociations
+- `action: 'vendeur_tentative'` → ajoute dans onglet TentativesVendeur
+
+**URL de déploiement actuelle** :
+```
+https://script.google.com/macros/s/AKfycbyuFUZLcuERegbLUMJG26M3bz_rJjeBb8raPqXB-b9XiUlmc6C7WKQ4YuuJPezuPDby/exec
+```
+
+**Configuration du déploiement** :
+
+- Type : Application Web
+- Exécuter en tant que : Moi
+- Qui a accès : Tout le monde
+- À chaque modification du code, faire : Déployer > Gérer les déploiements > crayon > Nouvelle version > Déployer (l'URL ne change pas)
+
+## 6. Authentification
+
+- Le mot de passe est haché en SHA-256 **côté navigateur** avant l'envoi
+- Le hash est stocké dans Google Sheets (colonne PasswordHash)
+- La session est sauvegardée dans localStorage (`sm_session`)
+- Chaque rôle a sa page de redirection après login : admin → dashboard-admin.html, vendeur → dashboard-vendeur.html, client → index.html
+- Pas de token JWT, pas de session serveur (limitation Apps Script)
+
+**Compte admin par défaut** :
+
+- Email : `admin@surprendmoi.bi`
+- Mot de passe initial : `admin1234` (à changer dans l'onglet Admin du Sheet et dans `Code.gs`)
+
+## 7. Gestion des images
+
+- Le vendeur choisit une photo dans `ajouter-produit.html`
+- La photo est compressée côté navigateur via Canvas : redimensionnée à 800px max, qualité 0.75
+- La photo compressée est convertie en base64 et envoyée dans le POST
+- La colonne Photo de l'onglet Produits contient le base64 complet (long texte)
+- Limite : au-delà de 20 produits avec photos, Google Sheets devient lent, il faudra passer à un stockage externe (Imgur, Cloudinary)
+
+## 8. Problèmes rencontrés et solutions
+
+**CORS** : Apps Script n'accepte pas les POST avec `Content-Type: application/json`. Solution : envoyer en `Content-Type: text/plain;charset=utf-8` avec `mode: 'no-cors'`. Conséquence : le site ne peut pas lire la réponse du POST. Pour vérifier qu'un POST a fonctionné, il faut regarder le Sheet, pas la réponse du site.
+
+**`(p.telephone || "").replace is not a function`** : Google Sheets renvoie les numéros de téléphone comme des nombres, pas comme du texte. Solution : convertir en string avant replace.
+```javascript
+var telephone = String(p.telephone == null ? '' : p.telephone);
+var tel = telephone.replace(/[^0-9]/g, '');
+```
+
+**`ERR_NAME_NOT_RESOLVED`, `ERR_CONNECTION_CLOSED`, `ERR_SOCKET_NOT_CONNECTED`** : problèmes de connexion internet au Burundi qui coupent la communication avec `script.google.com`. Pas un bug de code.
+
+**Onglets mal nommés** : le code cherchait `Vendeurs` mais les onglets s'appelaient `Vendeur`, `produit`, etc. Solution : renommer exactement comme dans le code.
+
+## 9. Commandes Git
+
+**Premier push** :
+```
+git init
+git add .
+git commit -m "Initial commit - Surprend Moi"
+git remote add origin https://github.com/tonybarakana-cmyk/surprend-moi.git
+git branch -M main
+git push -u origin main
+```
+
+**À chaque modification** :
+```
+git add .
+git commit -m "Description"
+git push
+```
+
+**GitHub Pages** : Settings > Pages > Source : Deploy from a branch > main / (root). Site en ligne sur :
+```
+https://tonybarakana-cmyk.github.io/surprend-moi/
+```
+
+## 10. Limites actuelles connues
+
+- Google Apps Script : quota d'environ 500 requêtes/jour en usage gratuit
+- Google Sheets : devient lent au-delà de 500 visites/jour ou 20 produits avec photos base64
+- Pas de lecture de la réponse des POST à cause du `no-cors` : impossible d'afficher un vrai message d'erreur pour les inscriptions et ajouts de produits
+- Pas de session serveur : la session est purement côté client (localStorage)
+- Connexion internet instable au Burundi : cause d'erreurs aléatoires
+
+## 11. Prochaines étapes prévues
+
+- Corriger et valider l'ajout de produit (photo bien enregistrée dans Sheet, apparition dans le dashboard vendeur)
+- Ajouter un vrai message d'erreur pour les POST (nécessite de sortir du `no-cors`, donc de changer de backend)
+- Migration future vers un hébergeur PHP + MySQL (InfinityFree gratuit, ou Hostinger payant) quand la plateforme aura des utilisateurs
+- Ajout de paiement en ligne (Lumicash, Ecocash, Smart Pesa) plus tard
+- Monétisation : abonnement vendeur (10 000 000 FBu/mois une fois la plateforme pleine)
+
+---
+
+Copie ce résumé dans une nouvelle discussion, avec l'IA de ton choix. Elle comprendra l'état exact du projet et pourra continuer sans repartir de zéro.

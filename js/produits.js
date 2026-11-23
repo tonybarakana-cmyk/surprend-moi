@@ -110,7 +110,7 @@
   function mettreAJourProfil(data) {
     var s = window.SM_AUTH.getSession();
     if (!s) return Promise.reject(new Error('Non connecte'));
-    
+
     var uploadPromise = (data.photo && data.photo.indexOf('data:') === 0)
       ? uploaderCloudinary(data.photo)
       : Promise.resolve(data.photo || '');
@@ -121,12 +121,16 @@
         role: s.role,
         email: s.email,
         nom: data.nom,
-        telephone: data.telephone,
+        telephone: window.SM_AUTH.normaliserTelephone(data.telephone),
         photo: photoUrl,
         specialite: data.specialite || ''
       });
     });
   }
+
+  var _cacheProduits = null;
+  var _cacheTime = 0;
+  var CACHE_DUREE = 60 * 1000;
 
   function mesProduits() {
     var s = window.SM_AUTH.getSession();
@@ -137,9 +141,23 @@
     }).then(function (r) { return r.produits || []; });
   }
 
-  function tousProduits() {
+  function tousProduits(forcer) {
+    var now = Date.now();
+    if (!forcer && _cacheProduits && (now - _cacheTime) < CACHE_DUREE) {
+      return Promise.resolve(_cacheProduits);
+    }
     return window.SM_AUTH.apiGet({ action: 'tous_produits' })
-      .then(function (r) { return r.produits || []; });
+      .then(function (r) {
+        var liste = r.produits || [];
+        liste.sort(function (a, b) {
+          var va = a.statut === 'vendu' ? 1 : 0;
+          var vb = b.statut === 'vendu' ? 1 : 0;
+          return va - vb;
+        });
+        _cacheProduits = liste;
+        _cacheTime = now;
+        return liste;
+      });
   }
 
   function tousVendeurs() {

@@ -8,16 +8,31 @@
       });
   }
 
+  var SESSION_DUREE = 30 * 24 * 60 * 60 * 1000; // 30 jours
+
   function saveSession(user) {
     try {
-      localStorage.setItem(window.CONFIG.SESSION_KEY, JSON.stringify(user));
+      var data = { user: user, expire: Date.now() + SESSION_DUREE };
+      localStorage.setItem(window.CONFIG.SESSION_KEY, JSON.stringify(data));
     } catch (e) {}
   }
 
   function getSession() {
     try {
       var raw = localStorage.getItem(window.CONFIG.SESSION_KEY);
-      return raw ? JSON.parse(raw) : null;
+      if (!raw) return null;
+      var data = JSON.parse(raw);
+      // Ancien format (objet user direct) : migration
+      if (!data.expire && data.email) {
+        saveSession(data);
+        return data;
+      }
+      if (!data.expire || !data.user) return null;
+      if (Date.now() > data.expire) {
+        clearSession();
+        return null;
+      }
+      return data.user;
     } catch (e) { return null; }
   }
 
@@ -43,6 +58,13 @@
     return fetch(window.CONFIG.API_URL + '?' + qs).then(function (r) { return r.json(); });
   }
 
+  function normaliserTelephone(tel) {
+    var t = String(tel == null ? '' : tel).replace(/[^0-9]/g, '');
+    if (t.length === 8 && t.charAt(0) === '7') t = '257' + t;
+    else if (t.length === 9 && t.charAt(0) === '0') t = '257' + t.substring(1);
+    return t;
+  }
+
   function inscrireClient(data) {
     return sha256(data.password).then(function (hash) {
       return apiPost({
@@ -50,7 +72,7 @@
         email: data.email,
         password: hash,
         nom: data.nom,
-        telephone: data.telephone
+        telephone: normaliserTelephone(data.telephone)
       });
     });
   }
@@ -62,7 +84,7 @@
         email: data.email,
         password: hash,
         nom: data.nom,
-        telephone: data.telephone,
+        telephone: normaliserTelephone(data.telephone),
         boutique: data.boutique,
         categorie: data.categorie,
         zone: data.zone
@@ -82,8 +104,14 @@
 
   function exigerConnexion(role) {
     var s = getSession();
-    if (!s || (role && s.role !== role)) {
+    if (!s) {
       location.href = 'connexion.html';
+      return null;
+    }
+    if (role && s.role !== role) {
+      if (s.role === 'admin') location.href = 'dashboard-admin.html';
+      else if (s.role === 'vendeur') location.href = 'dashboard-vendeur.html';
+      else location.href = 'dashboard-client.html';
       return null;
     }
     return s;
@@ -99,6 +127,7 @@
     connexion: connexion,
     exigerConnexion: exigerConnexion,
     apiGet: apiGet,
-    apiPost: apiPost
+    apiPost: apiPost,
+    normaliserTelephone: normaliserTelephone
   };
 })();

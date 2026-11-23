@@ -9,6 +9,13 @@
     return d.innerHTML;
   }
 
+  function urlSure(url) {
+    if (!url) return '';
+    var u = String(url).trim();
+    if (u.indexOf('https://') === 0 || u.indexOf('http://') === 0) return u;
+    return '';
+  }
+
   function formaterPrix(n) {
     return Number(n).toLocaleString('fr-FR') + ' FBu';
   }
@@ -43,7 +50,7 @@
     var tel = telephone.replace(/[^0-9]/g, '');
     var msgWA = encodeURIComponent('Bonjour, je suis interesse par : ' + p.nom + ' (' + p.prix + ' FBu) - vu sur Surprend Moi');
     var lienWA = 'https://wa.me/' + tel + '?text=' + msgWA;
-    var photoOptimisee = optimiserUrlCloudinary(p.photo, 400);
+    var photoOptimisee = optimiserUrlCloudinary(urlSure(p.photo), 400);
     var estVendu = p.statut === 'vendu';
 
     var badgeCat = !estVendu && p.categorie ? '<span class="badge-cat">' + escapeHtml(p.categorie) + '</span>' : '';
@@ -51,20 +58,19 @@
     var iconCoeur = '<div class="badge-fav"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></div>';
 
     var html =
-      '<div class="produit-media" style="cursor:pointer;" onclick="location.href=\'produit.html?id=' + escapeHtml(p.id) + '\'">' +
+      '<div class="produit-media" style="cursor:pointer;" data-lien="produit.html?id=' + encodeURIComponent(p.id || '') + '">' +
         '<img class="produit-img" src="' + escapeHtml(photoOptimisee) + '" alt="' + escapeHtml(p.nom) + '" loading="lazy" decoding="async">' +
         badgeCat + badgeVendu + iconCoeur +
       '</div>' +
       '<div class="produit-info">' +
-        '<div class="produit-nom" style="cursor:pointer;" onclick="location.href=\'produit.html?id=' + escapeHtml(p.id) + '\'">' + escapeHtml(p.nom) + '</div>' +
+        '<div class="produit-nom" style="cursor:pointer;" data-lien="produit.html?id=' + encodeURIComponent(p.id || '') + '">' + escapeHtml(p.nom) + '</div>' +
         '<div class="produit-prix">' + formaterPrix(p.prix) + '</div>' +
         '<div class="produit-meta">' +
           '<span>' + escapeHtml(p.boutique || p.vendeur || '') + '</span>' +
           '<span>' + escapeHtml(p.zone || '') + '</span>' +
         '</div>' +
-        '<a class="produit-voir" href="produit.html?id=' + escapeHtml(p.id) + '">Voir</a>';
+        '<a class="produit-voir" href="produit.html?id=' + encodeURIComponent(p.id || '') + '">Voir</a>';
 
-    // DESIGN AMÉLIORÉ DES BOUTONS D'ACTION
     if (options.actions === 'disponible') {
       html += '<div class="produit-actions">' +
                 '<button class="btn-action btn-marquer" data-id="' + escapeHtml(p.id) + '" style="display:flex; align-items:center; justify-content:center; gap:6px;">' +
@@ -98,12 +104,21 @@
     html += '</div>';
     div.innerHTML = html;
 
+    // Navigation sans onclick inline
+    var liens = div.querySelectorAll('[data-lien]');
+    for (var i = 0; i < liens.length; i++) {
+      liens[i].addEventListener('click', function () {
+        location.href = this.getAttribute('data-lien');
+      });
+    }
+
     return div;
   }
 
   window.SM_APP = {
     qs: qs,
     escapeHtml: escapeHtml,
+    urlSure: urlSure,
     formaterPrix: formaterPrix,
     creerCarteProduit: creerCarteProduit,
     optimiserUrlCloudinary: optimiserUrlCloudinary,
